@@ -1,1017 +1,1814 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#071b2e">
-
-    <title>Dengue AI Guardian | Awareness & Monitoring</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            --navy: #071b2e;
-            --navy-light: #102b43;
-            --teal: #12b8a6;
-            --teal-light: #dff8f3;
-            --orange: #ff9f43;
-            --white: #ffffff;
-            --muted: #65788a;
-            --background: #f4f8fb;
-            --border: #e4edf2;
-            --shadow: 0 15px 45px rgba(7, 27, 46, 0.08);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--background);
-            color: var(--navy);
-            line-height: 1.6;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        button {
-            font: inherit;
-            cursor: pointer;
-        }
-
-        .container {
-            width: min(1160px, 90%);
-            margin: auto;
-        }
-
-        /* NAVBAR */
-
-        header {
-            background: rgba(7, 27, 46, 0.97);
-            color: white;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.12);
-        }
-
-        .navbar {
-            min-height: 76px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-family: 'Manrope', sans-serif;
-            font-weight: 800;
-            font-size: 19px;
-        }
-
-        .brand-icon {
-            width: 43px;
-            height: 43px;
-            border-radius: 13px;
-            display: grid;
-            place-items: center;
-            background: var(--teal);
-            font-size: 23px;
-        }
-
-        .brand span {
-            color: var(--teal);
-        }
-
-        nav {
-            display: flex;
-            align-items: center;
-            gap: 27px;
-        }
-
-        nav a {
-            color: #d4e2ec;
-            font-size: 14px;
-            transition: 0.2s;
-        }
-
-        nav a:hover {
-            color: var(--teal);
-        }
-
-        .nav-button {
-            background: var(--teal);
-            color: var(--navy);
-            padding: 11px 19px;
-            border-radius: 9px;
-            font-weight: 700;
-        }
-
-        /* HERO */
-
-        .hero {
-            background:
-                radial-gradient(circle at 85% 20%, rgba(18,184,166,0.2), transparent 30%),
-                linear-gradient(120deg, #071b2e, #102f49);
-            color: white;
-            padding: 100px 0 95px;
-            overflow: hidden;
-        }
-
-        .hero-content {
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            align-items: center;
-            gap: 55px;
-        }
-
-        .eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #75e5d7;
-            background: rgba(18,184,166,0.12);
-            border: 1px solid rgba(18,184,166,0.3);
-            border-radius: 30px;
-            padding: 8px 14px;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 24px;
-        }
-
-        .hero h1 {
-            font-family: 'Manrope', sans-serif;
-            font-size: clamp(38px, 5.5vw, 64px);
-            line-height: 1.12;
-            letter-spacing: -2px;
-            margin-bottom: 22px;
-        }
-
-        .hero h1 span {
-            color: var(--teal);
-        }
-
-        .hero-description {
-            max-width: 580px;
-            color: #c4d4df;
-            font-size: 17px;
-            margin-bottom: 32px;
-        }
-
-        .hero-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 14px;
-        }
-
-        .primary-button,
-        .secondary-button {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            gap: 9px;
-            padding: 15px 23px;
-            border-radius: 10px;
-            font-weight: 700;
-            transition: 0.25s;
-        }
-
-        .primary-button {
-            background: var(--teal);
-            color: var(--navy);
-            border: 1px solid var(--teal);
-        }
-
-        .primary-button:hover {
-            background: #35d2bf;
-            transform: translateY(-3px);
-        }
-
-        .secondary-button {
-            border: 1px solid #587085;
-            color: white;
-        }
-
-        .secondary-button:hover {
-            border-color: var(--teal);
-            color: #75e5d7;
-        }
-
-        .hero-visual {
-            min-height: 330px;
-            display: grid;
-            place-items: center;
-            position: relative;
-        }
-
-        .visual-circle {
-            width: min(300px, 75vw);
-            height: min(300px, 75vw);
-            border-radius: 50%;
-            background: linear-gradient(145deg, #143f59, #0d283e);
-            border: 1px solid rgba(255,255,255,0.12);
-            display: grid;
-            place-items: center;
-            box-shadow: 0 0 0 25px rgba(18,184,166,0.04),
-                        0 0 0 50px rgba(18,184,166,0.025);
-        }
-
-        .shield {
-            font-size: 120px;
-            filter: drop-shadow(0 15px 25px rgba(18,184,166,0.3));
-        }
-
-        .floating-card {
-            position: absolute;
-            background: white;
-            color: var(--navy);
-            border-radius: 13px;
-            padding: 13px 17px;
-            box-shadow: var(--shadow);
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .floating-card.one {
-            top: 35px;
-            right: 0;
-        }
-
-        .floating-card.two {
-            bottom: 35px;
-            left: 0;
-        }
-
-        /* INTRO STRIP */
-
-        .intro-strip {
-            background: white;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .strip-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            padding: 25px 0;
-            gap: 20px;
-        }
-
-        .strip-item {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            color: var(--muted);
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .strip-icon {
-            font-size: 24px;
-        }
-
-        /* SECTION COMMON */
-
-        section.content-section {
-            padding: 85px 0;
-        }
-
-        .section-heading {
-            text-align: center;
-            max-width: 690px;
-            margin: 0 auto 45px;
-        }
-
-        .section-label {
-            color: #079b8b;
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 1.7px;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-        }
-
-        .section-heading h2 {
-            font-family: 'Manrope', sans-serif;
-            font-size: clamp(28px, 4vw, 39px);
-            line-height: 1.2;
-            margin-bottom: 14px;
-        }
-
-        .section-heading p {
-            color: var(--muted);
-            font-size: 15px;
-        }
-
-        /* FEATURES */
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 22px;
-        }
-
-        .feature-card {
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 17px;
-            padding: 27px;
-            transition: 0.25s;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow);
-            border-color: #a6e9df;
-        }
-
-        .feature-icon {
-            width: 53px;
-            height: 53px;
-            border-radius: 14px;
-            display: grid;
-            place-items: center;
-            background: var(--teal-light);
-            font-size: 25px;
-            margin-bottom: 20px;
-        }
-
-        .feature-card h3 {
-            font-family: 'Manrope', sans-serif;
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-
-        .feature-card p {
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        /* HOW IT WORKS */
-
-        .how-section {
-            background: #eaf3f7;
-        }
-
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-        }
-
-        .step-card {
-            background: white;
-            border-radius: 16px;
-            padding: 28px;
-            text-align: center;
-            box-shadow: 0 7px 25px rgba(7,27,46,0.04);
-        }
-
-        .step-number {
-            width: 48px;
-            height: 48px;
-            display: grid;
-            place-items: center;
-            border-radius: 50%;
-            background: var(--navy);
-            color: white;
-            font-weight: 800;
-            margin: 0 auto 17px;
-        }
-
-        .step-card h3 {
-            margin-bottom: 9px;
-            font-family: 'Manrope', sans-serif;
-        }
-
-        .step-card p {
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        /* CTA */
-
-        .cta-section {
-            padding: 75px 0;
-        }
-
-        .cta-box {
-            background: linear-gradient(120deg, #0b293f, #12445a);
-            border-radius: 22px;
-            color: white;
-            text-align: center;
-            padding: 55px 25px;
-        }
-
-        .cta-box h2 {
-            font-family: 'Manrope', sans-serif;
-            font-size: clamp(27px, 4vw, 38px);
-            margin-bottom: 14px;
-        }
-
-        .cta-box p {
-            color: #c7d9e2;
-            max-width: 620px;
-            margin: 0 auto 25px;
-        }
-
-        /* ABOUT */
-
-        .about-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-        }
-
-        .about-card {
-            background: white;
-            border: 1px solid var(--border);
-            padding: 30px;
-            border-radius: 17px;
-        }
-
-        .about-card h3 {
-            font-family: 'Manrope', sans-serif;
-            margin-bottom: 15px;
-        }
-
-        .about-card p {
-            color: var(--muted);
-            font-size: 14px;
-            margin-bottom: 12px;
-        }
-
-        .about-card strong {
-            color: var(--navy);
-        }
-
-        /* REFERENCES */
-
-        .references-section {
-            background: #eaf3f7;
-            padding: 55px 0;
-        }
-
-        .references-section h2 {
-            font-family: 'Manrope', sans-serif;
-            margin-bottom: 20px;
-        }
-
-        .references-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .references-list a {
-            background: white;
-            border: 1px solid var(--border);
-            padding: 12px 16px;
-            border-radius: 9px;
-            color: #176b77;
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .references-list a:hover {
-            border-color: var(--teal);
-        }
-
-        /* FOOTER */
-
-        footer {
-            background: var(--navy);
-            color: #c4d4df;
-            padding: 28px 0;
-            font-size: 13px;
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .footer-brand {
-            color: white;
-            font-weight: 800;
-        }
-
-        .footer-brand span {
-            color: var(--teal);
-        }
-
-        .medical-note {
-            background: #fff8e9;
-            border: 1px solid #f4dfb2;
-            color: #74531c;
-            border-radius: 12px;
-            padding: 18px;
-            margin-top: 22px;
-            font-size: 13px;
-        }
-
-        /* RESPONSIVE */
-
-        @media (max-width: 850px) {
-            .hero-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            .hero-description {
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .hero-actions {
-                justify-content: center;
-            }
-
-            .hero-visual {
-                min-height: 300px;
-            }
-
-            .features-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            nav {
-                gap: 13px;
-            }
-
-            nav a {
-                font-size: 12px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .navbar {
-                padding: 13px 0;
-                flex-wrap: wrap;
-            }
-
-            nav {
-                width: 100%;
-                justify-content: space-between;
-                gap: 8px;
-                flex-wrap: wrap;
-            }
-
-            nav a {
-                font-size: 11px;
-            }
-
-            .nav-button {
-                padding: 8px 11px;
-            }
-
-            .hero {
-                padding: 65px 0;
-            }
-
-            .hero h1 {
-                letter-spacing: -1px;
-            }
-
-            .strip-grid {
-                grid-template-columns: 1fr;
-                gap: 14px;
-            }
-
-            .strip-item {
-                justify-content: flex-start;
-            }
-
-            section.content-section {
-                padding: 60px 0;
-            }
-
-            .features-grid,
-            .steps-grid,
-            .about-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .floating-card.one {
-                right: -5px;
-            }
-
-            .floating-card.two {
-                left: -5px;
-            }
-
-            .footer-content {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#071b2b">
+  <meta name="description" content="Dengue AI Guardian - Dengue awareness, symptom guidance, weather monitoring, health resources and medical care support.">
+  <title>Dengue AI Guardian | Health Awareness & Safety</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #071b2b;
+      --bg2: #0b2638;
+      --card: #102f43;
+      --card2: #14384c;
+      --teal: #27d5bd;
+      --teal2: #13ad9c;
+      --white: #f5fbff;
+      --muted: #a8bdca;
+      --line: rgba(255,255,255,.10);
+      --red: #ff7777;
+      --yellow: #ffd477;
+      --green: #72dfb0;
+      --shadow: 0 18px 50px rgba(0,0,0,.2);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+
+    body {
+      font-family: "DM Sans", sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      line-height: 1.65;
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; }
+
+    .container {
+      width: min(1160px, 92%);
+      margin: auto;
+    }
+
+    .section { padding: 88px 0; }
+
+    .section-heading {
+      max-width: 720px;
+      margin: 0 auto 42px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      color: var(--teal);
+      font-weight: 700;
+      font-size: .78rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: "Manrope", sans-serif;
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: clamp(1.8rem, 4vw, 2.7rem);
+      margin-bottom: 14px;
+    }
+
+    .section-heading p, .muted { color: var(--muted); }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7,27,43,.94);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav-inner {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-family: "Manrope", sans-serif;
+      font-weight: 800;
+      font-size: 1.05rem;
+      white-space: nowrap;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: rgba(39,213,189,.13);
+      color: var(--teal);
+      font-size: 1.45rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      color: var(--muted);
+      font-size: .87rem;
+    }
+
+    .nav-links a:hover { color: var(--teal); }
+
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 19px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      transition: .2s;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-primary {
+      color: #062a2a;
+      background: var(--teal);
+    }
+
+    .btn-primary:hover { background: #61ead7; }
+
+    .btn-outline {
+      border: 1px solid rgba(39,213,189,.5);
+      color: var(--teal);
+      background: transparent;
+    }
+
+    .btn-secondary {
+      color: var(--white);
+      background: rgba(255,255,255,.09);
+      border: 1px solid var(--line);
+    }
+
+    .btn-danger {
+      color: white;
+      background: #b94040;
+    }
+
+    .hero {
+      padding: 92px 0 76px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 80% 20%, rgba(39,213,189,.14), transparent 32%),
+        radial-gradient(circle at 10% 80%, rgba(26,115,140,.14), transparent 35%);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      align-items: center;
+      gap: 55px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 5.4vw, 4.5rem);
+      letter-spacing: -2px;
+      margin: 12px 0 22px;
+    }
+
+    .hero h1 span { color: var(--teal); }
+
+    .hero-copy {
+      color: var(--muted);
+      font-size: 1.08rem;
+      max-width: 620px;
+      margin-bottom: 28px;
+    }
+
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+    .hero-visual {
+      min-height: 360px;
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+
+    .shield {
+      width: 240px;
+      height: 270px;
+      display: grid;
+      place-items: center;
+      font-size: 7rem;
+      color: var(--teal);
+      background: linear-gradient(145deg, rgba(39,213,189,.18), rgba(39,213,189,.02));
+      border: 1px solid rgba(39,213,189,.4);
+      clip-path: polygon(50% 0, 95% 17%, 88% 70%, 50% 100%, 12% 70%, 5% 17%);
+      filter: drop-shadow(0 20px 35px rgba(39,213,189,.13));
+    }
+
+    .float-card {
+      position: absolute;
+      padding: 13px 16px;
+      border-radius: 14px;
+      background: #14384c;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      font-size: .86rem;
+    }
+
+    .float-card strong { display: block; color: var(--teal); }
+    .float-one { top: 35px; right: 0; }
+    .float-two { bottom: 35px; left: 0; }
+
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-top: 42px;
+    }
+
+    .stat {
+      text-align: center;
+      padding: 23px 15px;
+      background: var(--bg2);
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--teal);
+      font-family: "Manrope", sans-serif;
+      font-size: 1.25rem;
+    }
+
+    .stat span { color: var(--muted); font-size: .85rem; }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 20px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 22px;
+    }
+
+    .card {
+      padding: 25px;
+      border-radius: var(--radius);
+      background: var(--card);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .card h3 { margin: 12px 0 9px; font-size: 1.12rem; }
+    .card p { color: var(--muted); font-size: .94rem; }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: rgba(39,213,189,.12);
+      color: var(--teal);
+      font-size: 1.5rem;
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 11px;
+      margin-top: 17px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .feature-list li { list-style: none; }
+    .feature-list li::before { content: "✓"; color: var(--teal); margin-right: 9px; }
+
+    .steps { counter-reset: steps; }
+    .step { position: relative; padding-left: 65px; }
+    .step::before {
+      counter-increment: steps;
+      content: counter(steps);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 43px;
+      height: 43px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      color: var(--teal);
+      background: rgba(39,213,189,.13);
+      font-weight: 800;
+    }
+
+    .panel {
+      background: linear-gradient(145deg, #103247, #0c293b);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 30px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field.full { grid-column: 1/-1; }
+
+    label { color: #d8e8ef; font-size: .9rem; font-weight: 600; }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 11px;
+      padding: 12px 13px;
+      color: var(--white);
+      background: #092235;
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(39,213,189,.1);
+    }
+
+    select option { background: #092235; }
+    textarea { min-height: 95px; resize: vertical; }
+
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      background: rgba(255,255,255,.045);
+      padding: 11px;
+      border-radius: 10px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .check-item input { width: auto; accent-color: var(--teal); }
+
+    .result-box {
+      display: none;
+      margin-top: 22px;
+      padding: 20px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.05);
+    }
+
+    .result-box.show { display: block; }
+    .result-box h3 { margin-bottom: 9px; }
+    .result-box p { color: var(--muted); margin-top: 7px; }
+
+    .notice {
+      border-left: 4px solid var(--yellow);
+      background: rgba(255,212,119,.08);
+      padding: 15px 17px;
+      border-radius: 8px;
+      color: #f4dfb7;
+      font-size: .9rem;
+      margin-top: 18px;
+    }
+
+    .notice-danger {
+      border-left-color: var(--red);
+      background: rgba(255,119,119,.09);
+      color: #ffd1d1;
+    }
+
+    .notice-success {
+      border-left-color: var(--green);
+      background: rgba(114,223,176,.08);
+      color: #c4f5df;
+    }
+
+    .weather-value {
+      font-family: "Manrope", sans-serif;
+      font-size: 2.5rem;
+      color: var(--teal);
+      font-weight: 800;
+      margin: 10px 0;
+    }
+
+    .weather-details {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .weather-details div {
+      background: rgba(255,255,255,.05);
+      padding: 13px;
+      border-radius: 11px;
+    }
+
+    .weather-details small { display: block; color: var(--muted); }
+    .weather-details strong { color: var(--white); }
+
+    .table-wrap { overflow-x: auto; margin-top: 15px; }
+    table { width: 100%; border-collapse: collapse; min-width: 460px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--line); }
+    th { color: var(--teal); font-size: .88rem; }
+    td { color: var(--muted); font-size: .88rem; }
+
+    .voice-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+    .voice-output {
+      min-height: 110px;
+      padding: 17px;
+      margin-top: 15px;
+      border-radius: 13px;
+      background: #092235;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      white-space: pre-wrap;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--yellow);
+      margin-right: 7px;
+    }
+
+    .small { font-size: .82rem; color: var(--muted); }
+    .link-list { display: grid; gap: 12px; margin-top: 15px; }
+    .link-list a { color: var(--teal); overflow-wrap: anywhere; }
+    .link-list a:hover { text-decoration: underline; }
+
+    .cta {
+      text-align: center;
+      padding: 60px 25px;
+      border-radius: 25px;
+      background: linear-gradient(120deg, rgba(39,213,189,.16), rgba(39,213,189,.04));
+      border: 1px solid rgba(39,213,189,.25);
+    }
+
+    .cta p { color: var(--muted); max-width: 650px; margin: 12px auto 23px; }
+
+    .footer {
+      border-top: 1px solid var(--line);
+      padding: 35px 0;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+
+    .hidden { display: none !important; }
+
+    @media(max-width:900px) {
+      .nav-links { display: none; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-visual { min-height: 300px; }
+      .grid-3 { grid-template-columns: repeat(2,1fr); }
+    }
+
+    @media(max-width:620px) {
+      .section { padding: 65px 0; }
+      .grid-3, .grid-2, .form-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .stats-strip { grid-template-columns: 1fr; }
+      .check-grid { grid-template-columns: 1fr; }
+      .hero { padding-top: 65px; }
+      .hero h1 { letter-spacing: -1px; }
+      .brand { font-size: .9rem; }
+      .nav-inner { min-height: 66px; }
+      .hero-actions .btn { width: 100%; }
+      .panel { padding: 20px; }
+    }
+  </style>
 </head>
 
 <body>
 
-    <!-- NAVIGATION -->
-    <header>
-        <div class="container navbar">
+  <!-- NAVIGATION -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a class="brand" href="#home">
+        <span class="brand-icon">🛡️</span>
+        <span>Dengue AI Guardian</span>
+      </a>
 
-            <a href="#home" class="brand">
-                <div class="brand-icon">🛡️</div>
-                <div>Dengue <span>AI Guardian</span></div>
-            </a>
+      <div class="nav-links">
+        <a href="#home">Home</a>
+        <a href="#features">Features</a>
+        <a href="#assessment">Assessment</a>
+        <a href="#weather">Weather</a>
+        <a href="#voice">Voice Assistant</a>
+        <a href="#care">Find Care</a>
+        <a href="tips.html">Prevention</a>
+      </div>
 
-            <nav>
-                <a href="#home">Home</a>
-                <a href="#features">Features</a>
-                <a href="#how-it-works">How It Works</a>
-                <a href="#about">About</a>
-                <a href="tips.html">Prevention</a>
-                <a href="#launch" class="nav-button">Open App ↗</a>
-            </nav>
+      <a class="btn btn-primary" href="https://dengue-ml-app-chiclm22snpuvd7pypxazs.streamlit.app/" target="_blank" rel="noopener">
+        Open App ↗
+      </a>
+    </div>
+  </nav>
 
-        </div>
-    </header>
+  <!-- HERO -->
+  <header class="hero" id="home">
+    <div class="container">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">Awareness · Monitoring · Safety</span>
+          <h1>Smarter Dengue Awareness. <span>Safer Communities.</span></h1>
+          <p class="hero-copy">
+            Dengue AI Guardian brings together symptom awareness, weather monitoring,
+            government information, health education and medical-care resources
+            in one place.
+          </p>
 
-    <!-- HERO -->
-    <main>
-
-        <section class="hero" id="home">
-            <div class="container hero-content">
-
-                <div>
-                    <div class="eyebrow">
-                        🩺 Dengue Awareness & Monitoring
-                    </div>
-
-                    <h1>
-                        Stay Aware.<br>
-                        Stay Safe.<br>
-                        <span>Fight Dengue.</span>
-                    </h1>
-
-                    <p class="hero-description">
-                        Dengue AI Guardian is an educational monitoring
-                        prototype that brings together symptom recording,
-                        live weather information and government-reported
-                        dengue statistics to support public awareness.
-                    </p>
-
-                    <div class="hero-actions">
-                        <a href="#launch" class="primary-button">
-                            Explore the App →
-                        </a>
-
-                        <a href="tips.html" class="secondary-button">
-                            Prevention Tips
-                        </a>
-                    </div>
-                </div>
-
-                <div class="hero-visual">
-                    <div class="visual-circle">
-                        <div class="shield">🛡️</div>
-                    </div>
-
-                    <div class="floating-card one">
-                        🌦️ Weather Monitoring
-                    </div>
-
-                    <div class="floating-card two">
-                        📊 Dengue Data Awareness
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- INTRO STRIP -->
-        <div class="intro-strip">
-            <div class="container strip-grid">
-
-                <div class="strip-item">
-                    <span class="strip-icon">📝</span>
-                    Symptom Record Management
-                </div>
-
-                <div class="strip-item">
-                    <span class="strip-icon">🌦️</span>
-                    Live Weather Information
-                </div>
-
-                <div class="strip-item">
-                    <span class="strip-icon">🇮🇳</span>
-                    Government Dengue Statistics
-                </div>
-
-            </div>
+          <div class="hero-actions">
+            <a href="#assessment" class="btn btn-primary">Check Symptoms →</a>
+            <a href="#care" class="btn btn-outline">Find Medical Care</a>
+          </div>
         </div>
 
-        <!-- FEATURES -->
-        <section class="content-section" id="features">
-            <div class="container">
-
-                <div class="section-heading">
-                    <div class="section-label">Core Capabilities</div>
-
-                    <h2>Technology for Dengue Awareness</h2>
-
-                    <p>
-                        Explore the current capabilities of the Dengue
-                        AI Guardian prototype.
-                    </p>
-                </div>
-
-                <div class="features-grid">
-
-                    <div class="feature-card">
-                        <div class="feature-icon">🩺</div>
-                        <h3>Symptom Assessment</h3>
-                        <p>
-                            Record fever, body pain and skin rash
-                            responses through a simple assessment.
-                        </p>
-                    </div>
-
-                    <div class="feature-card">
-                        <div class="feature-icon">🗄️</div>
-                        <h3>Patient Records</h3>
-                        <p>
-                            Store symptom responses in a local
-                            SQLite database for record management.
-                        </p>
-                    </div>
-
-                    <div class="feature-card">
-                        <div class="feature-icon">🌦️</div>
-                        <h3>Live Weather</h3>
-                        <p>
-                            Retrieve Bengaluru temperature, humidity
-                            and precipitation using Open-Meteo.
-                        </p>
-                    </div>
-
-                    <div class="feature-card">
-                        <div class="feature-icon">📊</div>
-                        <h3>Government Statistics</h3>
-                        <p>
-                            Display Karnataka dengue case and death
-                            figures retrieved from the NCVBDC website.
-                        </p>
-                    </div>
-
-                    <div class="feature-card">
-                        <div class="feature-icon">🛡️</div>
-                        <h3>Health Awareness</h3>
-                        <p>
-                            Learn about dengue symptoms, prevention
-                            and warning signs that require urgent care.
-                        </p>
-                    </div>
-
-                    <div class="feature-card">
-                        <div class="feature-icon">📚</div>
-                        <h3>Educational Resources</h3>
-                        <p>
-                            Access dengue information, prevention
-                            guidance and platelet count education.
-                        </p>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <!-- HOW IT WORKS -->
-        <section class="content-section how-section" id="how-it-works">
-            <div class="container">
-
-                <div class="section-heading">
-                    <div class="section-label">Simple Process</div>
-                    <h2>How Dengue AI Guardian Works</h2>
-                    <p>
-                        A simple workflow for symptom recording
-                        and dengue awareness.
-                    </p>
-                </div>
-
-                <div class="steps-grid">
-
-                    <div class="step-card">
-                        <div class="step-number">01</div>
-                        <h3>Enter Symptoms</h3>
-                        <p>
-                            Answer the symptom questions to record
-                            the information you provide.
-                        </p>
-                    </div>
-
-                    <div class="step-card">
-                        <div class="step-number">02</div>
-                        <h3>Save Your Record</h3>
-                        <p>
-                            The prototype stores the symptom responses
-                            in its local database.
-                        </p>
-                    </div>
-
-                    <div class="step-card">
-                        <div class="step-number">03</div>
-                        <h3>Explore Information</h3>
-                        <p>
-                            View weather information and government
-                            dengue statistics for awareness.
-                        </p>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <!-- APP LAUNCH -->
-        <section class="cta-section" id="launch">
-            <div class="container">
-                <div class="cta-box">
-
-                    <div class="section-label">Get Started</div>
-
-                    <h2>Explore Dengue AI Guardian</h2>
-
-                    <p>
-                        Open the interactive assessment application
-                        to explore its current features.
-                    </p>
-
-                    <a
-                        href="https://dengue-ml-app-chiclm22snpuvd7pypxazs.streamlit.app/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="primary-button"
-                        id="predictBtn"
-                    >
-                        Launch Application ↗
-                    </a>
-
-                </div>
-            </div>
-        </section>
-
-        <!-- ABOUT -->
-        <section class="content-section" id="about">
-            <div class="container">
-
-                <div class="section-heading">
-                    <div class="section-label">Project Information</div>
-                    <h2>About Dengue AI Guardian</h2>
-                    <p>
-                        An educational prototype developed to support
-                        dengue awareness through technology.
-                    </p>
-                </div>
-
-                <div class="about-grid">
-
-                    <div class="about-card">
-                        <h3>🎯 Project Purpose</h3>
-
-                        <p>
-                            <strong>Dengue AI Guardian</strong> is an
-                            educational dengue awareness and monitoring
-                            prototype designed to support early awareness
-                            through symptom recording, weather monitoring
-                            and government-reported dengue statistics.
-                        </p>
-
-                        <p>
-                            It provides a simple way to explore dengue
-                            information and maintain symptom records.
-                        </p>
-                    </div>
-
-                    <div class="about-card">
-                        <h3>💻 Technology Stack</h3>
-
-                        <p><strong>Programming:</strong> Python</p>
-                        <p><strong>Database:</strong> SQLite</p>
-                        <p><strong>Data Processing:</strong> Pandas</p>
-                        <p><strong>Weather API:</strong> Open-Meteo</p>
-                        <p><strong>Government Data:</strong> NCVBDC</p>
-                        <p><strong>Web Technologies:</strong> HTML, CSS and JavaScript</p>
-                        <p><strong>Developed By:</strong> Mamatha</p>
-                    </div>
-
-                </div>
-
-                <div class="medical-note">
-                    <strong>⚠️ Medical Safety Disclaimer:</strong>
-                    This prototype does not diagnose dengue, calculate
-                    a clinically validated dengue risk score or replace
-                    professional medical advice. The symptom count is
-                    not a diagnosis. If severe abdominal pain, persistent
-                    vomiting, bleeding, difficulty breathing, confusion
-                    or cold/clammy skin occurs, seek urgent medical care.
-                </div>
-
-            </div>
-        </section>
-
-        <!-- REFERENCES -->
-        <section class="references-section">
-            <div class="container">
-
-                <h2>References & Useful Resources</h2>
-
-                <div class="references-list">
-
-                    <a
-                        href="https://www.who.int/news-room/fact-sheets/detail/dengue-and-severe-dengue"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        WHO – Dengue Facts ↗
-                    </a>
-
-                    <a
-                        href="https://www.cdc.gov/dengue/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        CDC – Dengue Information ↗
-                    </a>
-
-                    <a
-                        href="https://ncvbdc.mohfw.gov.in/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        NCVBDC – Government of India ↗
-                    </a>
-
-                    <a
-                        href="https://open-meteo.com/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Open-Meteo API ↗
-                    </a>
-
-                    <a href="platelet.html">
-                        Platelet Count Guide
-                    </a>
-
-                    <a href="information.html">
-                        Dengue Information
-                    </a>
-
-                    <a href="tips.html">
-                        Prevention Tips
-                    </a>
-
-                </div>
-
-            </div>
-        </section>
-
-    </main>
-
-    <!-- FOOTER -->
-    <footer>
-        <div class="container footer-content">
-
-            <div class="footer-brand">
-                Dengue <span>AI Guardian</span>
-            </div>
-
-            <div>
-                © 2026 Mamatha | Dengue Awareness & Monitoring Prototype
-            </div>
-
-            <div>
-                Built with care for public awareness ❤️
-            </div>
-
+        <div class="hero-visual">
+          <div class="shield">✚</div>
+          <div class="float-card float-one">
+            <strong>🌦️ Weather Monitoring</strong>
+            Live weather information
+          </div>
+          <div class="float-card float-two">
+            <strong>🩺 Health Awareness</strong>
+            Safety-first information
+          </div>
         </div>
-    </footer>
+      </div>
 
+      <div class="stats-strip">
+        <div class="stat">
+          <strong>Symptoms</strong>
+          <span>Health awareness assessment</span>
+        </div>
+        <div class="stat">
+          <strong>Live Weather</strong>
+          <span>Open-Meteo API integration</span>
+        </div>
+        <div class="stat">
+          <strong>Official Sources</strong>
+          <span>Government health resources</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Platform capabilities</span>
+        <h2>15 Integrated Features</h2>
+        <p>A connected dengue awareness and safety platform. Clinical diagnosis and treatment decisions remain with qualified healthcare professionals.</p>
+      </div>
+
+      <div class="grid-3">
+        <article class="card">
+          <div class="card-icon">🩺</div>
+          <h3>1. Symptom Assessment</h3>
+          <p>Record common dengue-related symptoms and receive general health guidance, not a diagnosis.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-icon">🌦️</div>
+          <h3>2. Live Weather Monitoring</h3>
+          <p>Fetch temperature, humidity and precipitation information using Open-Meteo.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-icon">📊</div>
+          <h3>3. Government Statistics</h3>
+          <p>Access official dengue reports and statistics from NCVBDC resources.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-icon">🗄️</div>
+          <h3>4. Patient Records</h3>
+          <p>Connect with the existing application and its SQLite database for persistent records.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-icon">🎙️</div>
+          <h3>5. Kannada & English Voice Assistant</h3>
+          <p>Speak questions and listen to general health-awareness responses in supported browsers.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-icon">🏥</div>
+          <h3>6. Hospital Finder</h3>
+          <p>Search nearby hospitals and clinics using a location you choose.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-icon">🚨</div>
+          <h3>7. Emergency Safety Engine</h3>
+          <p>Highlight warning signs that need urgent medical attention.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-icon">🧪</div>
+          <h3>8. CBC Report Guidance</h3>
+          <p>Understand common blood-report terms and discuss results with a clinician.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-icon">🥗</div>
+          <h3>9. Food Guidance</h3>
+          <p>General hydration and balanced-food information during illness.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-icon">🦟</div>
+          <h3>10. Prevention & Awareness</h3>
+          <p>Learn mosquito-control practices and ways to reduce mosquito bites.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-icon">🔍</div>
+          <h3>11. Explainable Guidance</h3>
+          <p>See why a warning or recommendation appears and understand its limitations.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-icon">🔐</div>
+          <h3>12. Privacy & Security</h3>
+          <p>Limit personal information, avoid exposing medical data and use secure backend storage.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-icon">📈</div>
+          <h3>13. Dashboard</h3>
+          <p>View available weather information, assessment results and locally saved browser records.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-icon">🤖</div>
+          <h3>14. ML Integration</h3>
+          <p>Designed to connect to a validated trained model through a backend when available.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-icon">📚</div>
+          <h3>15. RAG & LLM Integration</h3>
+          <p>Prepared for a backend assistant grounded in trusted medical references.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="how">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Simple workflow</span>
+        <h2>How It Works</h2>
+        <p>From health awareness to trusted medical resources.</p>
+      </div>
+
+      <div class="grid-3 steps">
+        <div class="card step">
+          <h3>Enter Information</h3>
+          <p>Enter symptoms and optional details. Avoid entering unnecessary personal information.</p>
+        </div>
+
+        <div class="card step">
+          <h3>Review Guidance</h3>
+          <p>Review warning signs, weather information and general health guidance.</p>
+        </div>
+
+        <div class="card step">
+          <h3>Connect to Care</h3>
+          <p>Use official resources or contact a healthcare professional when needed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SYMPTOM ASSESSMENT -->
+  <section class="section" id="assessment">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Health awareness</span>
+        <h2>Symptom Assessment</h2>
+        <p>Record symptoms to help organise information for a healthcare professional.</p>
+      </div>
+
+      <div class="panel">
+        <form id="symptomForm">
+          <div class="form-grid">
+            <div class="field">
+              <label for="patientAge">Age</label>
+              <input id="patientAge" type="number" min="0" max="120" placeholder="Enter age">
+            </div>
+
+            <div class="field">
+              <label for="symptomDuration">How many days have symptoms been present?</label>
+              <input id="symptomDuration" type="number" min="0" max="60" placeholder="Number of days">
+            </div>
+
+            <div class="field full">
+              <label>Choose symptoms you are experiencing</label>
+              <div class="check-grid">
+                <label class="check-item"><input type="checkbox" name="symptoms" value="Fever"> Fever</label>
+                <label class="check-item"><input type="checkbox" name="symptoms" value="Severe headache"> Severe headache</label>
+                <label class="check-item"><input type="checkbox" name="symptoms" value="Pain behind eyes"> Pain behind eyes</label>
+                <label class="check-item"><input type="checkbox" name="symptoms" value="Muscle or joint pain"> Muscle or joint pain</label>
+                <label class="check-item"><input type="checkbox" name="symptoms" value="Skin rash"> Skin rash</label>
+                <label class="check-item"><input type="checkbox" name="symptoms" value="Nausea"> Nausea</label>
+                <label class="check-item"><input type="checkbox" name="symptoms" value="Vomiting"> Vomiting</label>
+                <label class="check-item"><input type="checkbox" name="symptoms" value="Loss of appetite"> Loss of appetite</label>
+                <label class="check-item"><input type="checkbox" name="symptoms" value="Abdominal pain"> Abdominal pain</label>
+                <label class="check-item"><input type="checkbox" name="symptoms" value="Unusual tiredness"> Unusual tiredness</label>
+              </div>
+            </div>
+
+            <div class="field full">
+              <label>Warning signs — select if present</label>
+              <div class="check-grid">
+                <label class="check-item"><input type="checkbox" name="warning" value="Severe abdominal pain"> Severe abdominal pain</label>
+                <label class="check-item"><input type="checkbox" name="warning" value="Persistent vomiting"> Persistent vomiting</label>
+                <label class="check-item"><input type="checkbox" name="warning" value="Bleeding"> Bleeding from nose or gums / blood in vomit or stool</label>
+                <label class="check-item"><input type="checkbox" name="warning" value="Breathing difficulty"> Difficulty breathing</label>
+                <label class="check-item"><input type="checkbox" name="warning" value="Confusion or drowsiness"> Confusion or unusual drowsiness</label>
+                <label class="check-item"><input type="checkbox" name="warning" value="Cold or clammy skin"> Cold or clammy skin / severe weakness</label>
+              </div>
+            </div>
+
+            <div class="field full">
+              <label for="additionalNotes">Additional notes (optional)</label>
+              <textarea id="additionalNotes" placeholder="Write any additional information you want to discuss with your doctor."></textarea>
+            </div>
+
+            <div class="field full">
+              <button class="btn btn-primary" type="submit">Review My Symptoms</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="result-box" id="assessmentResult" aria-live="polite"></div>
+
+        <div class="notice">
+          This is an educational symptom-awareness tool. It does not diagnose dengue,
+          calculate clinical risk or replace examination and testing by a qualified clinician.
+          A person can have dengue without every listed symptom.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CBC REPORT GUIDANCE -->
+  <section class="section" id="cbc">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Blood report awareness</span>
+        <h2>CBC Report Guidance</h2>
+        <p>Learn what common CBC parameters mean. A doctor must interpret your actual report in clinical context.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-icon">🧪</div>
+          <h3>Common CBC Parameters</h3>
+          <ul class="feature-list">
+            <li><strong>Platelets:</strong> Help blood clot.</li>
+            <li><strong>WBC:</strong> White blood cells involved in immune defence.</li>
+            <li><strong>Haemoglobin:</strong> Protein that carries oxygen.</li>
+            <li><strong>Haematocrit:</strong> Proportion of blood made up of red blood cells.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Understand a Report Value</h3>
+          <p class="small">This is an educational explanation, not an interpretation of your medical condition.</p>
+
+          <div class="field" style="margin-top:15px">
+            <label for="cbcParameter">Select parameter</label>
+            <select id="cbcParameter">
+              <option value="">Choose parameter</option>
+              <option value="platelets">Platelet count</option>
+              <option value="wbc">White blood cells (WBC)</option>
+              <option value="hb">Haemoglobin</option>
+              <option value="hematocrit">Haematocrit</option>
+            </select>
+          </div>
+
+          <div class="field" style="margin-top:13px">
+            <label for="cbcValue">Enter value from your report (optional)</label>
+            <input type="number" id="cbcValue" step="any" placeholder="Enter report value">
+          </div>
+
+          <button class="btn btn-primary" style="margin-top:15px" onclick="explainCBC()">Explain Parameter</button>
+          <div id="cbcResult" class="result-box" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div class="notice notice-danger">
+        Do not use platelet count alone to decide whether dengue is mild or severe.
+        Doctors consider symptoms, examination, trends in blood results and other clinical findings.
+        Do not delay care while waiting for a blood test.
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOD GUIDANCE -->
+  <section class="section" id="food">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Nutrition awareness</span>
+        <h2>Food & Hydration Guidance</h2>
+        <p>General supportive nutrition information during illness. Follow your clinician's advice, especially if you have other medical conditions.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-icon">🥗</div>
+          <h3>General Food Choices</h3>
+          <ul class="feature-list">
+            <li>Freshly prepared, balanced meals.</li>
+            <li>Rice, soft foods, vegetables and fruits as tolerated.</li>
+            <li>Protein-containing foods such as dal, eggs or other suitable options.</li>
+            <li>Small, frequent meals if appetite is low.</li>
+            <li>Safe drinking water and suitable fluids.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">💧</div>
+          <h3>Hydration & Caution</h3>
+          <ul class="feature-list">
+            <li>Drink fluids regularly as advised by your doctor.</li>
+            <li>Oral rehydration solution may be useful when recommended.</li>
+            <li>Avoid alcohol.</li>
+            <li>Avoid unverified remedies claimed to increase platelets.</li>
+            <li>Do not self-medicate with aspirin or ibuprofen when dengue is suspected.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="notice">
+        Fluid needs vary. People with kidney, heart or other medical conditions may need
+        individual fluid advice. Ask a healthcare professional.
+      </div>
+    </div>
+  </section>
+
+  <!-- EMERGENCY SAFETY -->
+  <section class="section" id="emergency">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Safety first</span>
+        <h2>Emergency Warning Signs</h2>
+        <p>Warning signs can occur during dengue, including around the time fever begins to settle.</p>
+      </div>
+
+      <div class="card">
+        <div class="notice notice-danger" style="margin-top:0">
+          <strong>Seek urgent medical care immediately</strong> if any of these warning signs occur.
+          Do not wait for this website to assess the situation.
+        </div>
+
+        <div class="grid-2" style="margin-top:20px">
+          <ul class="feature-list">
+            <li>Severe abdominal pain or tenderness.</li>
+            <li>Persistent vomiting.</li>
+            <li>Bleeding from nose or gums.</li>
+          </ul>
+          <ul class="feature-list">
+            <li>Blood in vomit or stool.</li>
+            <li>Difficulty breathing.</li>
+            <li>Confusion, unusual drowsiness or restlessness.</li>
+            <li>Cold, clammy skin or severe weakness.</li>
+          </ul>
+        </div>
+
+        <a class="btn btn-danger" href="tel:112" style="margin-top:22px">Call India Emergency 112</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- WEATHER -->
+  <section class="section" id="weather">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Environmental awareness</span>
+        <h2>Live Weather Monitoring</h2>
+        <p>Weather information can support mosquito-awareness activities. It cannot predict whether a person has dengue.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>📍 Bengaluru Weather</h3>
+          <p class="small">Live data from Open-Meteo. Coordinates are used only for this weather request.</p>
+          <div class="weather-value" id="temperature">-- °C</div>
+          <p id="weatherStatus">Fetching live weather data...</p>
+
+          <div class="weather-details">
+            <div><small>Humidity</small><strong id="humidity">--</strong></div>
+            <div><small>Precipitation</small><strong id="rain">--</strong></div>
+            <div><small>Wind speed</small><strong id="wind">--</strong></div>
+            <div><small>Updated</small><strong id="weatherTime">--</strong></div>
+          </div>
+
+          <button class="btn btn-outline" style="margin-top:18px" onclick="loadWeather()">Refresh Weather</button>
+        </div>
+
+        <div class="card">
+          <h3>Why Monitor Weather?</h3>
+          <p>Standing water can provide mosquito breeding sites. Weather conditions are one part of a wider public-health picture.</p>
+          <ul class="feature-list">
+            <li>Empty water from containers regularly.</li>
+            <li>Cover water storage containers.</li>
+            <li>Clean coolers, trays and drains.</li>
+            <li>Use mosquito protection measures.</li>
+            <li>Follow local public-health advisories.</li>
+          </ul>
+          <p class="small" style="margin-top:15px">Weather conditions alone cannot establish dengue transmission or individual infection risk.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GOVERNMENT DATA -->
+  <section class="section" id="statistics">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Trusted public information</span>
+        <h2>Government Dengue Statistics</h2>
+        <p>Use official government reports for verified case and mortality statistics.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <h3>NCVBDC — National Centre for Vector Borne Diseases Control</h3>
+          <p>Access official resources, national reports and dengue-related public-health information.</p>
+          <div class="link-list">
+            <a href="https://ncvbdc.mohfw.gov.in/" target="_blank" rel="noopener">Open NCVBDC official website ↗</a>
+            <a href="https://mohfw.gov.in/" target="_blank" rel="noopener">Ministry of Health and Family Welfare ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">📚</div>
+          <h3>Data Transparency</h3>
+          <p>Government figures may be updated, revised or marked provisional. Always check the reporting year, source and publication date.</p>
+          <div class="notice">
+            This static website does not claim to fetch or verify live national case totals.
+            Use the official report for the latest published numbers.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VOICE ASSISTANT -->
+  <section class="section" id="voice">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Kannada · English</span>
+        <h2>Voice Health Assistant</h2>
+        <p>Ask general dengue-awareness questions by voice or text. Responses are educational and are not generated by a medical AI model.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <h3>🎙️ Talk to Dengue Guardian</h3>
+
+          <div class="field" style="margin-top:18px">
+            <label for="voiceLanguage">Choose language</label>
+            <select id="voiceLanguage">
+              <option value="kn">Kannada</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+
+          <div class="voice-controls">
+            <button class="btn btn-primary" id="startVoice">🎙️ Start Speaking</button>
+            <button class="btn btn-secondary" id="stopVoice">Stop Listening</button>
+          </div>
+
+          <div class="field" style="margin-top:18px">
+            <label for="voiceQuestion">Or type your question</label>
+            <textarea id="voiceQuestion" placeholder="Ask about dengue symptoms, food, platelets or warning signs..."></textarea>
+          </div>
+
+          <button class="btn btn-outline" style="margin-top:12px" id="askVoiceText">Ask Question</button>
+
+          <div class="voice-output" id="voiceTranscript" aria-live="polite">
+            Your spoken or typed question will appear here.
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Guardian's Response</h3>
+          <div class="voice-output" id="voiceAnswer" aria-live="polite">
+            Namaskara! Dengue awareness information bekadre nanna kelabahudu.
+          </div>
+
+          <div class="voice-controls">
+            <button class="btn btn-primary" id="speakAnswer">🔊 Speak Answer</button>
+            <button class="btn btn-secondary" id="stopSpeech">Stop Audio</button>
+          </div>
+
+          <p class="small" style="margin-top:18px">
+            Voice input uses your browser's speech-recognition support.
+            Kannada voice availability depends on your browser and device.
+          </p>
+
+          <div class="notice">
+            This is a rule-based information assistant. It is not a doctor,
+            clinical chatbot or connected LLM/RAG system.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOSPITAL FINDER -->
+  <section class="section" id="care">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Connect to healthcare</span>
+        <h2>Find Medical Care</h2>
+        <p>Search for nearby hospitals and clinics. Contact the facility to confirm services and availability.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <h3>🏥 Search Nearby Hospitals</h3>
+
+          <div class="field" style="margin-top:18px">
+            <label for="careLocation">Enter your city, area or PIN code</label>
+            <input id="careLocation" type="text" placeholder="Example: Bengaluru or 560004">
+          </div>
+
+          <div class="field" style="margin-top:14px">
+            <label for="careType">Choose facility type</label>
+            <select id="careType">
+              <option value="hospitals">Hospitals</option>
+              <option value="government hospitals">Government hospitals</option>
+              <option value="clinics">Clinics</option>
+              <option value="emergency hospitals">Emergency hospitals</option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary" style="margin-top:18px" onclick="findHospitals()">Find Hospitals →</button>
+
+          <div class="notice">
+            The search opens Google Maps. Listings are not independently verified by this project.
+            Call the facility to confirm its address, doctor availability and dengue-care services.
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Official Healthcare Resources</h3>
+          <div class="link-list">
+            <a href="https://esanjeevani.mohfw.gov.in/" target="_blank" rel="noopener">eSanjeevani — Government telemedicine ↗</a>
+            <a href="https://hfw.karnataka.gov.in/" target="_blank" rel="noopener">Karnataka Health & Family Welfare Department ↗</a>
+            <a href="https://ncvbdc.mohfw.gov.in/" target="_blank" rel="noopener">NCVBDC — Dengue information ↗</a>
+            <a href="https://112.gov.in/" target="_blank" rel="noopener">India Emergency Response Support System ↗</a>
+          </div>
+
+          <a href="tel:112" class="btn btn-danger" style="margin-top:22px">Call Emergency 112</a>
+          <p class="small" style="margin-top:12px">For severe warning signs, seek urgent medical attention. Do not wait for an online search or appointment.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPLAINABLE GUIDANCE -->
+  <section class="section" id="explain">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Understand the information</span>
+        <h2>Explainable Guidance</h2>
+        <p>Understand why the website displays a warning or recommendation.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3>Symptom awareness</h3>
+          <p>The selected symptoms are displayed to help organise information for a clinician. Counting symptoms does not calculate dengue probability.</p>
+        </div>
+        <div class="card">
+          <h3>Emergency warnings</h3>
+          <p>Specific warning signs are highlighted because they can indicate a need for urgent clinical assessment.</p>
+        </div>
+        <div class="card">
+          <h3>Weather information</h3>
+          <p>Weather data describes environmental conditions. It does not confirm mosquito infection or an individual's dengue status.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD AND RECORDS -->
+  <section class="section" id="dashboard">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Personal overview</span>
+        <h2>Awareness Dashboard</h2>
+        <p>Review records saved in this browser. These are not automatically synced with your SQLite database.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">📋</div>
+          <h3>Assessments Saved</h3>
+          <div class="weather-value" id="recordCount">0</div>
+          <p>Records saved in this browser.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">🌦️</div>
+          <h3>Weather Status</h3>
+          <p id="dashboardWeather">Weather data not loaded yet.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">🔒</div>
+          <h3>Storage</h3>
+          <p>Browser-local storage for this demonstration. It is not a secure medical-record system.</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:22px">
+        <h3>Recent Browser Records</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Symptoms</th>
+                <th>Warning signs</th>
+              </tr>
+            </thead>
+            <tbody id="recordTable">
+              <tr><td colspan="3">No records saved in this browser.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <button class="btn btn-secondary" style="margin-top:15px" onclick="clearRecords()">Clear Browser Records</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ML / RAG ARCHITECTURE -->
+  <section class="section" id="ai">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Future backend integration</span>
+        <h2>ML, AI & RAG Architecture</h2>
+        <p>The website is structured to connect to validated backend services without pretending that an untrained model is already running.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-icon">🤖</div>
+          <h3>Machine Learning Integration</h3>
+          <p>A future backend can accept appropriately consented, de-identified data and return results from a properly trained and clinically evaluated model.</p>
+          <ul class="feature-list">
+            <li>Model training and validation.</li>
+            <li>Performance and error evaluation.</li>
+            <li>Bias and data-quality checks.</li>
+            <li>Clinician review before clinical use.</li>
+          </ul>
+          <p class="small" style="margin-top:15px">No trained clinical prediction model is claimed by this static page.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">📚</div>
+          <h3>RAG & LLM Assistant</h3>
+          <p>A secure backend can retrieve relevant information from approved medical references before generating a response.</p>
+          <ul class="feature-list">
+            <li>Trusted-source document collection.</li>
+            <li>Retrieval and source-grounded answers.</li>
+            <li>Kannada and English language support.</li>
+            <li>Medical safety rules and escalation.</li>
+          </ul>
+          <p class="small" style="margin-top:15px">An LLM API must be called securely from a backend. Never place API keys in this HTML file.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRIVACY -->
+  <section class="section" id="privacy">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Responsible technology</span>
+        <h2>Privacy & Data Security</h2>
+        <p>Health information should be handled carefully.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3>Minimise personal data</h3>
+          <p>Do not enter names, phone numbers, addresses or other identifying information unless truly required.</p>
+        </div>
+        <div class="card">
+          <h3>Secure backend</h3>
+          <p>Use authentication, HTTPS, access controls and appropriate database protection for real patient records.</p>
+        </div>
+        <div class="card">
+          <h3>Consent & deletion</h3>
+          <p>Explain what data is collected, why it is collected, how long it is retained and how users can request deletion.</p>
+        </div>
+      </div>
+
+      <div class="notice">
+        This website's browser records are stored on the device using local storage.
+        Do not use this demonstration storage for confidential or real patient records.
+      </div>
+    </div>
+  </section>
+
+  <!-- PREVENTION -->
+  <section class="section" id="prevention">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Protect your surroundings</span>
+        <h2>Dengue Prevention</h2>
+        <p>Prevent mosquito breeding and protect yourself from mosquito bites.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">🪣</div>
+          <h3>Remove Standing Water</h3>
+          <p>Empty and clean containers, trays, tyres and other places where water collects.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🛏️</div>
+          <h3>Prevent Mosquito Bites</h3>
+          <p>Use suitable repellents, screens and protective clothing. Use mosquito nets when appropriate.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🏡</div>
+          <h3>Community Action</h3>
+          <p>Keep surroundings clean and report mosquito-breeding concerns to local authorities.</p>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:25px">
+        <a href="tips.html" class="btn btn-outline">Explore Prevention Tips →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXISTING RESOURCES -->
+  <section class="section" id="resources">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Learn more</span>
+        <h2>Health Resources</h2>
+        <p>Explore official medical and educational references.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3>WHO</h3>
+          <p>Global dengue information and public-health guidance.</p>
+          <div class="link-list">
+            <a href="https://www.who.int/news-room/fact-sheets/detail/dengue-and-severe-dengue" target="_blank" rel="noopener">WHO Dengue Fact Sheet ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>CDC</h3>
+          <p>Dengue symptoms, warning signs and prevention information.</p>
+          <div class="link-list">
+            <a href="https://www.cdc.gov/dengue/" target="_blank" rel="noopener">CDC Dengue Resources ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Project Learning Pages</h3>
+          <p>Explore the existing educational pages in this project.</p>
+          <div class="link-list">
+            <a href="platelet.html">Platelet Information</a>
+            <a href="information.html">Dengue Information</a>
+            <a href="tips.html">Prevention Tips</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="container">
+      <div class="cta">
+        <span class="eyebrow">Dengue AI Guardian</span>
+        <h2>Awareness Today. Safer Tomorrow.</h2>
+        <p>
+          Use the existing project application to explore its symptom-recording workflow.
+          For medical concerns, consult a qualified healthcare professional.
+        </p>
+        <a href="https://dengue-ml-app-chiclm22snpuvd7pypxazs.streamlit.app/" target="_blank" rel="noopener" class="btn btn-primary">
+          Open Dengue Guardian App ↗
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">About the project</span>
+        <h2>About Dengue AI Guardian</h2>
+        <p>
+          Dengue AI Guardian is an educational project focused on dengue awareness,
+          environmental information, symptom organisation and access to healthcare resources.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Project Technologies</h3>
+          <ul class="feature-list">
+            <li>Python</li>
+            <li>SQLite</li>
+            <li>Pandas</li>
+            <li>Open-Meteo API</li>
+            <li>HTML, CSS and JavaScript</li>
+            <li>Streamlit</li>
+            <li>NCVBDC public information</li>
+            <li>Future ML, LLM and RAG backend integration</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Project Developer</h3>
+          <p><strong style="color:var(--teal)">Mamatha</strong></p>
+          <p style="margin-top:12px">
+            Built to bring dengue awareness, technology and responsible health information together.
+          </p>
+          <p class="small" style="margin-top:18px">Educational project. Not a hospital, diagnostic laboratory or government-affiliated medical service.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DISCLAIMER -->
+  <section class="section" id="disclaimer">
+    <div class="container">
+      <div class="card">
+        <h3>⚠️ Medical Disclaimer</h3>
+        <p style="margin-top:12px">
+          Dengue AI Guardian is an educational awareness project. It does not diagnose dengue,
+          prescribe medicines, interpret laboratory results as a doctor, predict an individual's
+          clinical outcome or replace professional medical advice.
+        </p>
+        <p style="margin-top:12px">
+          If dengue is suspected, contact a qualified healthcare professional for assessment
+          and appropriate testing. Seek urgent care for warning signs. In an emergency in India,
+          call 112 or go to the nearest emergency department.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <strong style="color:var(--white)">🛡️ Dengue AI Guardian</strong>
+        <p>Awareness · Monitoring · Safety</p>
+      </div>
+      <div>
+        <p>Developed by Mamatha</p>
+        <p>© <span id="year"></span> Dengue AI Guardian. Educational project.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // --------------------------------------------------
+    // GENERAL
+    // --------------------------------------------------
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // --------------------------------------------------
+    // SYMPTOM ASSESSMENT + BROWSER RECORDS
+    // --------------------------------------------------
+
+    const RECORD_KEY = "dengueGuardianAwarenessRecords";
+
+    function getRecords() {
+      try {
+        return JSON.parse(localStorage.getItem(RECORD_KEY) || "[]");
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveRecords(records) {
+      localStorage.setItem(RECORD_KEY, JSON.stringify(records));
+      updateDashboard();
+    }
+
+    document.getElementById("symptomForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const symptoms = [...document.querySelectorAll('input[name="symptoms"]:checked')]
+        .map(item => item.value);
+
+      const warnings = [...document.querySelectorAll('input[name="warning"]:checked')]
+        .map(item => item.value);
+
+      const age = document.getElementById("patientAge").value;
+      const duration = document.getElementById("symptomDuration").value;
+      const notes = document.getElementById("additionalNotes").value.trim();
+
+      const result = document.getElementById("assessmentResult");
+      result.classList.add("show");
+
+      let html = "";
+
+      if (warnings.length > 0) {
+        html += `
+          <h3 style="color:var(--red)">⚠️ Warning signs selected</h3>
+          <p>You selected: ${escapeHTML(warnings.join(", "))}.</p>
+          <p><strong>Seek urgent medical assessment now.</strong> Do not wait for an online assessment.</p>
+          <a class="btn btn-danger" href="tel:112" style="margin-top:14px">Call Emergency 112</a>
+        `;
+      } else if (symptoms.length > 0) {
+        html += `
+          <h3 style="color:var(--yellow)">Symptoms recorded</h3>
+          <p>You selected ${symptoms.length} symptom(s): ${escapeHTML(symptoms.join(", "))}.</p>
+          <p>These symptoms can occur in different illnesses, including dengue. This result does not confirm dengue or calculate your risk.</p>
+          <p>Please contact a healthcare professional for appropriate assessment and testing, especially if symptoms persist or worsen.</p>
+        `;
+      } else {
+        html += `
+          <h3>Assessment information</h3>
+          <p>No symptoms were selected. If you are concerned about your health, contact a healthcare professional.</p>
+        `;
+      }
+
+      html += `
+        <p><strong>Why this guidance?</strong> Warning signs are highlighted because they may require urgent clinical assessment. Symptom counts alone cannot diagnose dengue.</p>
+      `;
+
+      result.innerHTML = html;
+
+      const record = {
+        date: new Date().toLocaleString(),
+        symptoms: symptoms,
+        warnings: warnings,
+        age: age || null,
+        duration: duration || null,
+        notes: notes || ""
+      };
+
+      const records = getRecords();
+      records.unshift(record);
+      saveRecords(records.slice(0, 50));
+    });
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, function(character) {
+        return {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        }[character];
+      });
+    }
+
+    function updateDashboard() {
+      const records = getRecords();
+      document.getElementById("recordCount").textContent = records.length;
+
+      const table = document.getElementById("recordTable");
+
+      if (records.length === 0) {
+        table.innerHTML = '<tr><td colspan="3">No records saved in this browser.</td></tr>';
+        return;
+      }
+
+      table.innerHTML = records.slice(0, 10).map(record => `
+        <tr>
+          <td>${escapeHTML(record.date)}</td>
+          <td>${escapeHTML((record.symptoms || []).join(", ") || "None selected")}</td>
+          <td>${escapeHTML((record.warnings || []).join(", ") || "None selected")}</td>
+        </tr>
+      `).join("");
+    }
+
+    function clearRecords() {
+      if (confirm("Clear all awareness records saved in this browser?")) {
+        localStorage.removeItem(RECORD_KEY);
+        updateDashboard();
+      }
+    }
+
+    // --------------------------------------------------
+    // CBC EDUCATION
+    // --------------------------------------------------
+
+    function explainCBC() {
+      const parameter = document.getElementById("cbcParameter").value;
+      const value = document.getElementById("cbcValue").value;
+      const output = document.getElementById("cbcResult");
+
+      const explanations = {
+        platelets: "Platelets help blood clot. A platelet count must be interpreted with symptoms, examination and trends. A platelet count alone does not determine dengue severity.",
+        wbc: "White blood cells help the body fight infections. WBC values can change for many reasons and need clinical interpretation.",
+        hb: "Haemoglobin carries oxygen in the blood. Its interpretation depends on age, sex, pregnancy status, medical history and the laboratory reference range.",
+        hematocrit: "Haematocrit is the proportion of blood volume occupied by red blood cells. Changes may need assessment alongside hydration, symptoms and other test results."
+      };
+
+      if (!parameter) {
+        output.innerHTML = "<p>Please select a CBC parameter.</p>";
+        output.classList.add("show");
+        return;
+      }
+
+      output.innerHTML = `
+        <h3>${escapeHTML(parameter.toUpperCase())}</h3>
+        <p>${explanations[parameter]}</p>
+        ${value !== "" ? `<p>You entered: <strong>${escapeHTML(value)}</strong>. This website cannot determine whether this value is normal or dangerous without the laboratory reference range and clinical context.</p>` : ""}
+        <p>Discuss the complete report with your doctor.</p>
+      `;
+
+      output.classList.add("show");
+    }
+
+    // --------------------------------------------------
+    // LIVE WEATHER — OPEN-METEO
+    // --------------------------------------------------
+
+    async function loadWeather() {
+      const status = document.getElementById("weatherStatus");
+      status.textContent = "Fetching live weather data...";
+
+      const url = "https://api.open-meteo.com/v1/forecast?latitude=12.9716&longitude=77.5946&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=Asia%2FKolkata";
+
+      try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error("Weather service unavailable");
+        }
+
+        const data = await response.json();
+        const current = data.current;
+
+        document.getElementById("temperature").textContent =
+          current.temperature_2m + " °C";
+
+        document.getElementById("humidity").textContent =
+          current.relative_humidity_2m + " %";
+
+        document.getElementById("rain").textContent =
+          current.precipitation + " mm";
+
+        document.getElementById("wind").textContent =
+          current.wind_speed_10m + " km/h";
+
+        document.getElementById("weatherTime").textContent =
+          current.time.replace("T", " ");
+
+        status.textContent = "Live weather data received from Open-Meteo.";
+        document.getElementById("dashboardWeather").textContent =
+          current.temperature_2m + " °C · Humidity " +
+          current.relative_humidity_2m + "%";
+
+      } catch (error) {
+        status.textContent = "Unable to fetch weather right now. Please try again.";
+        document.getElementById("dashboardWeather").textContent = "Weather service unavailable.";
+      }
+    }
+
+    // --------------------------------------------------
+    // HOSPITAL FINDER
+    // --------------------------------------------------
+
+    function findHospitals() {
+      const location = document.getElementById("careLocation").value.trim();
+      const type = document.getElementById("careType").value;
+
+      if (!location) {
+        alert("Please enter your city, area or PIN code.");
+        document.getElementById("careLocation").focus();
+        return;
+      }
+
+      const query = type + " near " + location;
+      const url = "https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent(query);
+
+      window.open(url, "_blank", "noopener");
+    }
+
+    // --------------------------------------------------
+    // VOICE ASSISTANT — BROWSER SPEECH API
+    // --------------------------------------------------
+
+    const voiceLanguage = document.getElementById("voiceLanguage");
+    const voiceTranscript = document.getElementById("voiceTranscript");
+    const voiceAnswer = document.getElementById("voiceAnswer");
+
+    let recognition = null;
+    let currentAnswer = "";
+
+    function getLanguage() {
+      return voiceLanguage.value === "kn" ? "kn-IN" : "en-IN";
+    }
+
+    function answerHealthQuestion(question) {
+      const text = question.toLowerCase();
+      const kannada = voiceLanguage.value === "kn";
+
+      const emergencyTerms = [
+        "bleeding", "blood", "severe stomach pain", "severe abdominal pain",
+        "persistent vomiting", "difficulty breathing", "breathing problem",
+        "confusion", "unconscious", "cold skin", "clammy",
+        "ರಕ್ತಸ್ರಾವ", "ಹೊಟ್ಟೆ ನೋವು", "ಉಸಿರಾಟ", "ಪ್ರಜ್ಞೆ"
+      ];
+
+      const plateletTerms = ["platelet", "platelets", "ಪ್ಲೇಟ್ಲೆಟ್", "ಪ್ಲೇಟ್ಲೆಟ್ಸ್"];
+      const foodTerms = ["food", "eat", "diet", "drink", "water", "ಊಟ", "ಆಹಾರ", "ನೀರು"];
+      const symptomTerms = ["symptom", "fever", "dengue", "ಜ್ವರ", "ಡೆಂಗ್ಯೂ", "ಲಕ್ಷಣ"];
+
+      if (emergencyTerms.some(term => text.includes(term))) {
+        return kannada
+          ? "ನೀವು ಹೇಳಿರುವ ಲಕ್ಷಣಗಳು ತುರ್ತು ಎಚ್ಚರಿಕೆಯ ಲಕ್ಷಣಗಳಾಗಿರಬಹುದು. ದಯವಿಟ್ಟು ತಕ್ಷಣ ಹತ್ತಿರದ ಆಸ್ಪತ್ರೆಯ ತುರ್ತು ವಿಭಾಗಕ್ಕೆ ಹೋಗಿ. ಭಾರತದಲ್ಲಿ ತುರ್ತು ಸಹಾಯಕ್ಕಾಗಿ 112 ಗೆ ಕರೆ ಮಾಡಿ. ವೆಬ್‌ಸೈಟ್ ಉತ್ತರಕ್ಕಾಗಿ ಕಾಯಬೇಡಿ."
+          : "The symptom you mentioned may be an emergency warning sign. Please seek urgent medical care now or go to the nearest emergency department. In India, call 112 for emergency assistance. Do not wait for this website.";
+      }
+
+      if (plateletTerms.some(term => text.includes(term))) {
+        return kannada
+          ? "ಪ್ಲೇಟ್ಲೆಟ್‌ಗಳು ರಕ್ತ ಹೆಪ್ಪುಗಟ್ಟಲು ಸಹಾಯ ಮಾಡುತ್ತವೆ. ಪ್ಲೇಟ್ಲೆಟ್ ಸಂಖ್ಯೆ ಒಂದರಿಂದ ಮಾತ್ರ ಡೆಂಗ್ಯೂ ಗಂಭೀರತೆಯನ್ನು ನಿರ್ಧರಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ. ಸಂಪೂರ್ಣ CBC ವರದಿ ಮತ್ತು ನಿಮ್ಮ ಲಕ್ಷಣಗಳನ್ನು ವೈದ್ಯರು ಪರಿಶೀಲಿಸಬೇಕು."
+          : "Platelets help blood clot. A platelet count alone cannot determine dengue severity. A doctor must interpret your full blood report, symptoms and clinical condition.";
+      }
+
+      if (foodTerms.some(term => text.includes(term))) {
+        return kannada
+          ? "ಸಹಿಸಿಕೊಳ್ಳುವಷ್ಟು ಸಮತೋಲಿತ ಆಹಾರ ಸೇವಿಸಿ. ಸುರಕ್ಷಿತ ನೀರು ಮತ್ತು ವೈದ್ಯರು ಸೂಚಿಸಿದ ದ್ರವಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳಿ. ಪ್ಲೇಟ್ಲೆಟ್ ಹೆಚ್ಚಿಸುತ್ತದೆ ಎಂದು ಹೇಳುವ ಪರಿಶೀಲಿಸದ ಮನೆಮದ್ದುಗಳನ್ನು ನಂಬಬೇಡಿ. ನಿಮ್ಮ ವೈದ್ಯರ ಸಲಹೆ ಅನುಸರಿಸಿ."
+          : "Eat balanced food that you can tolerate and drink safe fluids as advised by your healthcare professional. Avoid unverified remedies claiming to increase platelets. Follow your doctor's advice.";
+      }
+
+      if (symptomTerms.some(term => text.includes(term))) {
+        return kannada
+          ? "ಡೆಂಗ್ಯೂನಲ್ಲಿ ಜ್ವರ, ತಲೆನೋವು, ಕಣ್ಣಿನ ಹಿಂಭಾಗ ನೋವು, ಸ್ನಾಯು ನೋವು, ಕೀಲು ನೋವು ಮತ್ತು ಚರ್ಮದ ದದ್ದು ಕಾಣಿಸಬಹುದು. ಆದರೆ ಈ ಲಕ್ಷಣಗಳಿಂದ ಮಾತ್ರ ಡೆಂಗ್ಯೂ ದೃಢಪಡಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ. ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ ಮತ್ತು ಅಗತ್ಯ ಪರೀಕ್ಷೆ ಮಾಡಿಸಿಕೊಳ್ಳಿ."
+          : "Dengue may cause fever, headache, pain behind the eyes, muscle and joint pain, nausea or rash. These symptoms alone cannot confirm dengue. Contact a healthcare professional for assessment and appropriate testing.";
+      }
+
+      return kannada
+        ? "ನಾನು ಡೆಂಗ್ಯೂ ಬಗ್ಗೆ ಸಾಮಾನ್ಯ ಆರೋಗ್ಯ ಮಾಹಿತಿ ನೀಡಬಲ್ಲೆ. ನಿಮ್ಮ ಆರೋಗ್ಯದ ಬಗ್ಗೆ ಅನುಮಾನವಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ. ತೀವ್ರ ಹೊಟ್ಟೆ ನೋವು, ನಿರಂತರ ವಾಂತಿ, ರಕ್ತಸ್ರಾವ ಅಥವಾ ಉಸಿರಾಟದ ತೊಂದರೆ ಇದ್ದರೆ ತಕ್ಷಣ ಆಸ್ಪತ್ರೆಗೆ ಹೋಗಿ."
+        : "I can provide general dengue-awareness information. For personal medical concerns, consult a qualified healthcare professional. Seek urgent care for severe abdominal pain, persistent vomiting, bleeding or breathing difficulty.";
+    }
+
+    function askAssistant(question) {
+      if (!question.trim()) {
+        voiceAnswer.textContent = "Please speak or type a question first.";
+        return;
+      }
+
+      voiceTranscript.textContent = "You asked: " + question;
+      currentAnswer = answerHealthQuestion(question);
+      voiceAnswer.textContent = currentAnswer;
+    }
+
+    document.getElementById("startVoice").addEventListener("click", function() {
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      if (!SpeechRecognition) {
+        voiceAnswer.textContent =
+          "Speech recognition is not supported in this browser. Please use Google Chrome or type your question instead.";
+        return;
+      }
+
+      try {
+        if (recognition) recognition.stop();
+
+        recognition = new SpeechRecognition();
+        recognition.lang = getLanguage();
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        voiceTranscript.textContent = "Listening... Please speak now.";
+
+        recognition.onresult = function(event) {
+          const question = event.results[0][0].transcript;
+          document.getElementById("voiceQuestion").value = question;
+          askAssistant(question);
+        };
+
+        recognition.onerror = function(event) {
+          voiceTranscript.textContent =
+            "Voice input error: " + event.error +
+            ". You can type your question instead.";
+        };
+
+        recognition.onend = function() {
+          document.getElementById("startVoice").textContent = "🎙️ Start Speaking";
+        };
+
+        recognition.start();
+        document.getElementById("startVoice").textContent = "Listening...";
+      } catch (error) {
+        voiceAnswer.textContent = "Could not start voice recognition. Please try again or type your question.";
+      }
+    });
+
+    document.getElementById("stopVoice").addEventListener("click", function() {
+      if (recognition) recognition.stop();
+      document.getElementById("startVoice").textContent = "🎙️ Start Speaking";
+    });
+
+    document.getElementById("askVoiceText").addEventListener("click", function() {
+      askAssistant(document.getElementById("voiceQuestion").value);
+    });
+
+    document.getElementById("speakAnswer").addEventListener("click", function() {
+      if (!currentAnswer) {
+        currentAnswer = voiceAnswer.textContent;
+      }
+
+      if (!("speechSynthesis" in window)) {
+        alert("Speech output is not supported in this browser.");
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(currentAnswer);
+      utterance.lang = getLanguage();
+      utterance.rate = 0.9;
+
+      const voices = window.speechSynthesis.getVoices();
+      const preferredVoice = voices.find(voice =>
+        voice.lang.toLowerCase() === getLanguage().toLowerCase()
+      );
+
+      if (preferredVoice) utterance.voice = preferredVoice;
+
+      window.speechSynthesis.speak(utterance);
+    });
+
+    document.getElementById("stopSpeech").addEventListener("click", function() {
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+    });
+
+    // --------------------------------------------------
+    // INITIALISE PAGE
+    // --------------------------------------------------
+
+    updateDashboard();
+    loadWeather();
+
+  </script>
 </body>
 </html>
