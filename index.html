@@ -1,215 +1,1017 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dengue Prediction Website</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <style>
-        /* ----- RESET & GENERAL ----- */
-        * {box-sizing: border-box; margin: 0; padding: 0;}
-        body {font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; color: #333;}
-        a {text-decoration: none; color: inherit;}
+    <meta name="theme-color" content="#071b2e">
 
-        /* ----- NAVBAR ----- */
-        nav {
-            width: 100%;
-            background-color: #0d3b66;
-            padding: 15px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    <title>Dengue AI Guardian | Awareness & Monitoring</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #071b2e;
+            --navy-light: #102b43;
+            --teal: #12b8a6;
+            --teal-light: #dff8f3;
+            --orange: #ff9f43;
+            --white: #ffffff;
+            --muted: #65788a;
+            --background: #f4f8fb;
+            --border: #e4edf2;
+            --shadow: 0 15px 45px rgba(7, 27, 46, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--background);
+            color: var(--navy);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .container {
+            width: min(1160px, 90%);
+            margin: auto;
+        }
+
+        /* NAVBAR */
+
+        header {
+            background: rgba(7, 27, 46, 0.97);
+            color: white;
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.12);
         }
-        nav .logo {color: white; font-size: 24px; font-weight: bold;}
-        nav ul {list-style: none; display: flex; gap: 25px;}
-        nav ul li a {color: white; font-size: 16px; padding: 6px 10px; transition: 0.3s;}
-        nav ul li a:hover {background: rgba(255,255,255,0.2); border-radius: 5px;}
 
-        /* ----- HEADER BANNER ----- */
-        header {
-            text-align: center;
-            padding: 50px 20px 20px 20px;
-            background: linear-gradient(135deg, #0d3b66, #1e5799);
+        .navbar {
+            min-height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: 19px;
+        }
+
+        .brand-icon {
+            width: 43px;
+            height: 43px;
+            border-radius: 13px;
+            display: grid;
+            place-items: center;
+            background: var(--teal);
+            font-size: 23px;
+        }
+
+        .brand span {
+            color: var(--teal);
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 27px;
+        }
+
+        nav a {
+            color: #d4e2ec;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--teal);
+        }
+
+        .nav-button {
+            background: var(--teal);
+            color: var(--navy);
+            padding: 11px 19px;
+            border-radius: 9px;
+            font-weight: 700;
+        }
+
+        /* HERO */
+
+        .hero {
+            background:
+                radial-gradient(circle at 85% 20%, rgba(18,184,166,0.2), transparent 30%),
+                linear-gradient(120deg, #071b2e, #102f49);
             color: white;
-            width: 100%;
+            padding: 100px 0 95px;
+            overflow: hidden;
         }
-        header h1 {font-size: 42px; margin-bottom: 10px;}
-        header p {font-size: 20px;}
 
-        /* ----- MAIN BUTTONS ----- */
-        .main-btn {margin: 30px 0; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;}
-        .predict-button, .info-btn {
-            padding: 16px 36px;
-            font-weight: bold;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            align-items: center;
+            gap: 55px;
         }
-        .predict-button {background: linear-gradient(45deg,#007bff,#0056b3); color: white; font-size: 20px;}
-        .predict-button:hover {transform: translateY(-3px); background: linear-gradient(45deg,#0056b3,#003d80);}
-        .info-btn {background-color: #1e7e34; color: white; font-size: 16px;}
-        .info-btn:hover {background-color: #166428; transform: translateY(-2px);}
 
-        /* ----- CARD SECTIONS ----- */
-        .card-container {
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #75e5d7;
+            background: rgba(18,184,166,0.12);
+            border: 1px solid rgba(18,184,166,0.3);
+            border-radius: 30px;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-family: 'Manrope', sans-serif;
+            font-size: clamp(38px, 5.5vw, 64px);
+            line-height: 1.12;
+            letter-spacing: -2px;
+            margin-bottom: 22px;
+        }
+
+        .hero h1 span {
+            color: var(--teal);
+        }
+
+        .hero-description {
+            max-width: 580px;
+            color: #c4d4df;
+            font-size: 17px;
+            margin-bottom: 32px;
+        }
+
+        .hero-actions {
             display: flex;
             flex-wrap: wrap;
-            gap: 25px;
+            gap: 14px;
+        }
+
+        .primary-button,
+        .secondary-button {
+            display: inline-flex;
             justify-content: center;
-            margin: 30px 10px;
+            align-items: center;
+            gap: 9px;
+            padding: 15px 23px;
+            border-radius: 10px;
+            font-weight: 700;
+            transition: 0.25s;
         }
-        .card {
+
+        .primary-button {
+            background: var(--teal);
+            color: var(--navy);
+            border: 1px solid var(--teal);
+        }
+
+        .primary-button:hover {
+            background: #35d2bf;
+            transform: translateY(-3px);
+        }
+
+        .secondary-button {
+            border: 1px solid #587085;
+            color: white;
+        }
+
+        .secondary-button:hover {
+            border-color: var(--teal);
+            color: #75e5d7;
+        }
+
+        .hero-visual {
+            min-height: 330px;
+            display: grid;
+            place-items: center;
+            position: relative;
+        }
+
+        .visual-circle {
+            width: min(300px, 75vw);
+            height: min(300px, 75vw);
+            border-radius: 50%;
+            background: linear-gradient(145deg, #143f59, #0d283e);
+            border: 1px solid rgba(255,255,255,0.12);
+            display: grid;
+            place-items: center;
+            box-shadow: 0 0 0 25px rgba(18,184,166,0.04),
+                        0 0 0 50px rgba(18,184,166,0.025);
+        }
+
+        .shield {
+            font-size: 120px;
+            filter: drop-shadow(0 15px 25px rgba(18,184,166,0.3));
+        }
+
+        .floating-card {
+            position: absolute;
             background: white;
-            border-radius: 12px;
-            padding: 20px;
-            width: 280px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            color: var(--navy);
+            border-radius: 13px;
+            padding: 13px 17px;
+            box-shadow: var(--shadow);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .floating-card.one {
+            top: 35px;
+            right: 0;
+        }
+
+        .floating-card.two {
+            bottom: 35px;
+            left: 0;
+        }
+
+        /* INTRO STRIP */
+
+        .intro-strip {
+            background: white;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .strip-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            padding: 25px 0;
+            gap: 20px;
+        }
+
+        .strip-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .strip-icon {
+            font-size: 24px;
+        }
+
+        /* SECTION COMMON */
+
+        section.content-section {
+            padding: 85px 0;
+        }
+
+        .section-heading {
             text-align: center;
-            transition: transform 0.3s;
+            max-width: 690px;
+            margin: 0 auto 45px;
         }
-        .card:hover {transform: translateY(-5px); box-shadow: 0 6px 18px rgba(0,0,0,0.2);}
-        .card img {width: 60px; margin-bottom: 15px;}
-        .card h3 {color: #0d3b66; margin-bottom: 10px;}
-        .card p {font-size: 16px; line-height: 1.5; color: #555;}
 
-        /* ----- ABOUT SECTION ----- */
-        .info-section {
+        .section-label {
+            color: #079b8b;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.7px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .section-heading h2 {
+            font-family: 'Manrope', sans-serif;
+            font-size: clamp(28px, 4vw, 39px);
+            line-height: 1.2;
+            margin-bottom: 14px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        /* FEATURES */
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+        }
+
+        .feature-card {
             background: white;
-            max-width: 800px;
-            width: 90%;
-            padding: 25px;
-            border-radius: 12px;
-            margin: 40px auto;
-            box-shadow: 0 4px 18px rgba(0,0,0,0.12);
-            border-top: 4px solid #007bff;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            padding: 27px;
+            transition: 0.25s;
         }
-        .info-section h2 {color: #0d3b66; text-align: center; margin-bottom: 15px; font-size: 28px;}
-        .info-section p {font-size: 18px; line-height: 1.6; margin-bottom: 12px;}
-        .info-section ul {list-style: disc inside; margin-top: 10px;}
-        .info-section ul li {margin-bottom: 8px; font-size: 16px; color: #555;}
 
-        /* ----- REFERENCES SECTION ----- */
-        .references-section {
-            background: #fff;
-            max-width: 800px;
-            width: 90%;
-            padding: 25px;
-            border-radius: 12px;
-            margin: 40px auto;
-            box-shadow: 0 4px 18px rgba(0,0,0,0.12);
-            border-top: 4px solid #1e7e34;
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow);
+            border-color: #a6e9df;
         }
-        .references-section h2 {color: #1e7e34; text-align: center; margin-bottom: 15px; font-size: 26px;}
-        .references-section ul {list-style: none; padding-left: 0;}
-        .references-section ul li {margin-bottom: 10px; font-size: 16px;}
-        .references-section ul li a {color: #007bff; text-decoration: none;}
-        .references-section ul li a:hover {text-decoration: underline;}
 
-        /* ----- FOOTER ----- */
-        footer {
-            background: #0d3b66;
+        .feature-icon {
+            width: 53px;
+            height: 53px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: var(--teal-light);
+            font-size: 25px;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-family: 'Manrope', sans-serif;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* HOW IT WORKS */
+
+        .how-section {
+            background: #eaf3f7;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .step-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            text-align: center;
+            box-shadow: 0 7px 25px rgba(7,27,46,0.04);
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--navy);
+            color: white;
+            font-weight: 800;
+            margin: 0 auto 17px;
+        }
+
+        .step-card h3 {
+            margin-bottom: 9px;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .step-card p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* CTA */
+
+        .cta-section {
+            padding: 75px 0;
+        }
+
+        .cta-box {
+            background: linear-gradient(120deg, #0b293f, #12445a);
+            border-radius: 22px;
             color: white;
             text-align: center;
-            padding: 25px 20px;
-            font-size: 16px;
-            margin-top: 40px;
+            padding: 55px 25px;
         }
 
-        /* ----- RESPONSIVE ----- */
-        @media(max-width:768px){
-            .card-container{flex-direction:column;align-items:center;}
-            .predict-button,.info-btn{width:90%;}
+        .cta-box h2 {
+            font-family: 'Manrope', sans-serif;
+            font-size: clamp(27px, 4vw, 38px);
+            margin-bottom: 14px;
+        }
+
+        .cta-box p {
+            color: #c7d9e2;
+            max-width: 620px;
+            margin: 0 auto 25px;
+        }
+
+        /* ABOUT */
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .about-card {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 17px;
+        }
+
+        .about-card h3 {
+            font-family: 'Manrope', sans-serif;
+            margin-bottom: 15px;
+        }
+
+        .about-card p {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .about-card strong {
+            color: var(--navy);
+        }
+
+        /* REFERENCES */
+
+        .references-section {
+            background: #eaf3f7;
+            padding: 55px 0;
+        }
+
+        .references-section h2 {
+            font-family: 'Manrope', sans-serif;
+            margin-bottom: 20px;
+        }
+
+        .references-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .references-list a {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 12px 16px;
+            border-radius: 9px;
+            color: #176b77;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .references-list a:hover {
+            border-color: var(--teal);
+        }
+
+        /* FOOTER */
+
+        footer {
+            background: var(--navy);
+            color: #c4d4df;
+            padding: 28px 0;
+            font-size: 13px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .footer-brand {
+            color: white;
+            font-weight: 800;
+        }
+
+        .footer-brand span {
+            color: var(--teal);
+        }
+
+        .medical-note {
+            background: #fff8e9;
+            border: 1px solid #f4dfb2;
+            color: #74531c;
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 22px;
+            font-size: 13px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 850px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-description {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-actions {
+                justify-content: center;
+            }
+
+            .hero-visual {
+                min-height: 300px;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            nav {
+                gap: 13px;
+            }
+
+            nav a {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 13px 0;
+                flex-wrap: wrap;
+            }
+
+            nav {
+                width: 100%;
+                justify-content: space-between;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            nav a {
+                font-size: 11px;
+            }
+
+            .nav-button {
+                padding: 8px 11px;
+            }
+
+            .hero {
+                padding: 65px 0;
+            }
+
+            .hero h1 {
+                letter-spacing: -1px;
+            }
+
+            .strip-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .strip-item {
+                justify-content: flex-start;
+            }
+
+            section.content-section {
+                padding: 60px 0;
+            }
+
+            .features-grid,
+            .steps-grid,
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .floating-card.one {
+                right: -5px;
+            }
+
+            .floating-card.two {
+                left: -5px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
-    <nav>
-        <div class="logo">Dengue Prediction</div>
-        <ul>
-            <li><a href="#about">About</a></li>
-            <li><a href="information.html">Information</a></li>
-            <li><a href="tips.html">Prevention Tips</a></li>
-            <li><a href="platelet.html">Platelet Count</a></li>
-        </ul>
-    </nav>
-
-    <!-- HEADER BANNER -->
+    <!-- NAVIGATION -->
     <header>
-        <h1>Dengue Prediction Website</h1>
-        <p>Predict dengue outbreaks, stay informed, and protect your community.</p>
+        <div class="container navbar">
+
+            <a href="#home" class="brand">
+                <div class="brand-icon">🛡️</div>
+                <div>Dengue <span>AI Guardian</span></div>
+            </a>
+
+            <nav>
+                <a href="#home">Home</a>
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#about">About</a>
+                <a href="tips.html">Prevention</a>
+                <a href="#launch" class="nav-button">Open App ↗</a>
+            </nav>
+
+        </div>
     </header>
 
-    <!-- MAIN BUTTONS -->
-    <div class="main-btn">
-        <button class="predict-button" id="predictBtn">Predict Dengue</button>
-        <button class="info-btn" onclick="window.location.href='information.html'">More Info</button>
-        <button class="info-btn" onclick="window.location.href='tips.html'">Prevention Tips</button>
-        <button class="info-btn" onclick="window.location.href='platelet.html'">Platelet Info</button>
-    </div>
+    <!-- HERO -->
+    <main>
 
-    <!-- CARDS: FEATURES / OPTIONS -->
-    <div class="card-container">
-        <div class="card">
-            <img src="https://img.icons8.com/color/96/000000/mosquito.png" alt="Prediction Icon">
-            <h3>Dengue Prediction</h3>
-            <p>Get real-time predictions for dengue risk levels in your area using our ML-powered app.</p>
-        </div>
-        <div class="card">
-            <img src="https://img.icons8.com/color/96/000000/info--v1.png" alt="Information Icon">
-            <h3>Information</h3>
-            <p>Learn about dengue, its symptoms, causes, and how to protect yourself and your family.</p>
-        </div>
-        <div class="card">
-            <img src="https://img.icons8.com/fluency/96/repellent-spray.png" alt="Prevention Icon">
-            <h3>Prevention Tips</h3>
-            <p>Follow practical tips to prevent dengue including mosquito control and hygiene measures.</p>
-        </div>
-        <div class="card">
-            <img src="https://img.icons8.com/color/96/000000/blood-test.png" alt="Platelet Icon">
-            <h3>Platelet Count</h3>
-            <p>Check how platelet levels affect dengue severity and understand risk categories.</p>
-        </div>
-    </div>
+        <section class="hero" id="home">
+            <div class="container hero-content">
 
-    <!-- ABOUT SECTION -->
-    <div id="about" class="info-section">
-        <h2>About the App</h2>
-        <p><strong>Purpose:</strong> The Dengue Prediction App uses data science and machine learning to forecast dengue outbreak levels, aiding early prevention efforts.</p>
-        <p><strong>Technology Used:</strong> Python, Machine Learning Models, and Streamlit framework for user interface.</p>
-        <p><strong>Created By:</strong> Mamatha</p>
-    </div>
+                <div>
+                    <div class="eyebrow">
+                        🩺 Dengue Awareness & Monitoring
+                    </div>
 
-    <!-- REFERENCES SECTION -->
-    <div class="references-section">
-        <h2>References</h2>
-        <ul>
-            <li><a href="https://www.who.int/news-room/fact-sheets/detail/dengue-and-severe-dengue" target="_blank">World Health Organization - Dengue Facts</a></li>
-            <li><a href="https://www.cdc.gov/dengue/" target="_blank">CDC - Dengue Information</a></li>
-            <li><a href="platelet.html">Platelet Count Guide</a></li>
-        </ul>
-    </div>
+                    <h1>
+                        Stay Aware.<br>
+                        Stay Safe.<br>
+                        <span>Fight Dengue.</span>
+                    </h1>
+
+                    <p class="hero-description">
+                        Dengue AI Guardian is an educational monitoring
+                        prototype that brings together symptom recording,
+                        live weather information and government-reported
+                        dengue statistics to support public awareness.
+                    </p>
+
+                    <div class="hero-actions">
+                        <a href="#launch" class="primary-button">
+                            Explore the App →
+                        </a>
+
+                        <a href="tips.html" class="secondary-button">
+                            Prevention Tips
+                        </a>
+                    </div>
+                </div>
+
+                <div class="hero-visual">
+                    <div class="visual-circle">
+                        <div class="shield">🛡️</div>
+                    </div>
+
+                    <div class="floating-card one">
+                        🌦️ Weather Monitoring
+                    </div>
+
+                    <div class="floating-card two">
+                        📊 Dengue Data Awareness
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- INTRO STRIP -->
+        <div class="intro-strip">
+            <div class="container strip-grid">
+
+                <div class="strip-item">
+                    <span class="strip-icon">📝</span>
+                    Symptom Record Management
+                </div>
+
+                <div class="strip-item">
+                    <span class="strip-icon">🌦️</span>
+                    Live Weather Information
+                </div>
+
+                <div class="strip-item">
+                    <span class="strip-icon">🇮🇳</span>
+                    Government Dengue Statistics
+                </div>
+
+            </div>
+        </div>
+
+        <!-- FEATURES -->
+        <section class="content-section" id="features">
+            <div class="container">
+
+                <div class="section-heading">
+                    <div class="section-label">Core Capabilities</div>
+
+                    <h2>Technology for Dengue Awareness</h2>
+
+                    <p>
+                        Explore the current capabilities of the Dengue
+                        AI Guardian prototype.
+                    </p>
+                </div>
+
+                <div class="features-grid">
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🩺</div>
+                        <h3>Symptom Assessment</h3>
+                        <p>
+                            Record fever, body pain and skin rash
+                            responses through a simple assessment.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🗄️</div>
+                        <h3>Patient Records</h3>
+                        <p>
+                            Store symptom responses in a local
+                            SQLite database for record management.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🌦️</div>
+                        <h3>Live Weather</h3>
+                        <p>
+                            Retrieve Bengaluru temperature, humidity
+                            and precipitation using Open-Meteo.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Government Statistics</h3>
+                        <p>
+                            Display Karnataka dengue case and death
+                            figures retrieved from the NCVBDC website.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h3>Health Awareness</h3>
+                        <p>
+                            Learn about dengue symptoms, prevention
+                            and warning signs that require urgent care.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">📚</div>
+                        <h3>Educational Resources</h3>
+                        <p>
+                            Access dengue information, prevention
+                            guidance and platelet count education.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- HOW IT WORKS -->
+        <section class="content-section how-section" id="how-it-works">
+            <div class="container">
+
+                <div class="section-heading">
+                    <div class="section-label">Simple Process</div>
+                    <h2>How Dengue AI Guardian Works</h2>
+                    <p>
+                        A simple workflow for symptom recording
+                        and dengue awareness.
+                    </p>
+                </div>
+
+                <div class="steps-grid">
+
+                    <div class="step-card">
+                        <div class="step-number">01</div>
+                        <h3>Enter Symptoms</h3>
+                        <p>
+                            Answer the symptom questions to record
+                            the information you provide.
+                        </p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">02</div>
+                        <h3>Save Your Record</h3>
+                        <p>
+                            The prototype stores the symptom responses
+                            in its local database.
+                        </p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">03</div>
+                        <h3>Explore Information</h3>
+                        <p>
+                            View weather information and government
+                            dengue statistics for awareness.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- APP LAUNCH -->
+        <section class="cta-section" id="launch">
+            <div class="container">
+                <div class="cta-box">
+
+                    <div class="section-label">Get Started</div>
+
+                    <h2>Explore Dengue AI Guardian</h2>
+
+                    <p>
+                        Open the interactive assessment application
+                        to explore its current features.
+                    </p>
+
+                    <a
+                        href="https://dengue-ml-app-chiclm22snpuvd7pypxazs.streamlit.app/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="primary-button"
+                        id="predictBtn"
+                    >
+                        Launch Application ↗
+                    </a>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ABOUT -->
+        <section class="content-section" id="about">
+            <div class="container">
+
+                <div class="section-heading">
+                    <div class="section-label">Project Information</div>
+                    <h2>About Dengue AI Guardian</h2>
+                    <p>
+                        An educational prototype developed to support
+                        dengue awareness through technology.
+                    </p>
+                </div>
+
+                <div class="about-grid">
+
+                    <div class="about-card">
+                        <h3>🎯 Project Purpose</h3>
+
+                        <p>
+                            <strong>Dengue AI Guardian</strong> is an
+                            educational dengue awareness and monitoring
+                            prototype designed to support early awareness
+                            through symptom recording, weather monitoring
+                            and government-reported dengue statistics.
+                        </p>
+
+                        <p>
+                            It provides a simple way to explore dengue
+                            information and maintain symptom records.
+                        </p>
+                    </div>
+
+                    <div class="about-card">
+                        <h3>💻 Technology Stack</h3>
+
+                        <p><strong>Programming:</strong> Python</p>
+                        <p><strong>Database:</strong> SQLite</p>
+                        <p><strong>Data Processing:</strong> Pandas</p>
+                        <p><strong>Weather API:</strong> Open-Meteo</p>
+                        <p><strong>Government Data:</strong> NCVBDC</p>
+                        <p><strong>Web Technologies:</strong> HTML, CSS and JavaScript</p>
+                        <p><strong>Developed By:</strong> Mamatha</p>
+                    </div>
+
+                </div>
+
+                <div class="medical-note">
+                    <strong>⚠️ Medical Safety Disclaimer:</strong>
+                    This prototype does not diagnose dengue, calculate
+                    a clinically validated dengue risk score or replace
+                    professional medical advice. The symptom count is
+                    not a diagnosis. If severe abdominal pain, persistent
+                    vomiting, bleeding, difficulty breathing, confusion
+                    or cold/clammy skin occurs, seek urgent medical care.
+                </div>
+
+            </div>
+        </section>
+
+        <!-- REFERENCES -->
+        <section class="references-section">
+            <div class="container">
+
+                <h2>References & Useful Resources</h2>
+
+                <div class="references-list">
+
+                    <a
+                        href="https://www.who.int/news-room/fact-sheets/detail/dengue-and-severe-dengue"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        WHO – Dengue Facts ↗
+                    </a>
+
+                    <a
+                        href="https://www.cdc.gov/dengue/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        CDC – Dengue Information ↗
+                    </a>
+
+                    <a
+                        href="https://ncvbdc.mohfw.gov.in/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        NCVBDC – Government of India ↗
+                    </a>
+
+                    <a
+                        href="https://open-meteo.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Open-Meteo API ↗
+                    </a>
+
+                    <a href="platelet.html">
+                        Platelet Count Guide
+                    </a>
+
+                    <a href="information.html">
+                        Dengue Information
+                    </a>
+
+                    <a href="tips.html">
+                        Prevention Tips
+                    </a>
+
+                </div>
+
+            </div>
+        </section>
+
+    </main>
 
     <!-- FOOTER -->
     <footer>
-        © 2025 Mamatha | Designed for Official Dengue Awareness
-    </footer>
+        <div class="container footer-content">
 
-    <!-- JAVASCRIPT -->
-    <script>
-        // Predict Dengue button points to deployed Streamlit app
-        document.getElementById('predictBtn').addEventListener('click', () => {
-            window.open('https://dengue-ml-app-chiclm22snpuvd7pypxazs.streamlit.app', '_blank');
-        });
-    </script>
+            <div class="footer-brand">
+                Dengue <span>AI Guardian</span>
+            </div>
+
+            <div>
+                © 2026 Mamatha | Dengue Awareness & Monitoring Prototype
+            </div>
+
+            <div>
+                Built with care for public awareness ❤️
+            </div>
+
+        </div>
+    </footer>
 
 </body>
 </html>
