@@ -3,9 +3,13 @@ import json
 import sqlite3
 import urllib.request
 from html.parser import HTMLParser
+from math import radians, sin, cos, sqrt, atan2
 
 import pandas as pd
+import requests
+import folium
 import streamlit as st
+from streamlit_folium import st_folium
 
 from database import create_tables, save_symptoms
 
@@ -29,7 +33,7 @@ st.warning(
 )
 
 
-# ---------------- BUILT-IN HTML TABLE PARSER ----------------
+# ---------------- HTML TABLE PARSER ----------------
 
 class TableParser(HTMLParser):
 
@@ -89,7 +93,7 @@ def get_bengaluru_weather():
             headers={"User-Agent": "DengueAIGuardian/1.0"}
         )
 
-        with urllib.request.urlopen(request, timeout=10) as response:
+        with urllib.request.urlopen(request, timeout=15) as response:
             data = json.loads(response.read().decode("utf-8"))
 
         return data.get("current", {}), None
@@ -148,14 +152,373 @@ def get_official_dengue_data():
             if has_karnataka:
                 return df, url, None
 
-        return (
-            None,
-            url,
-            "Karnataka row was not found in the government HTML tables."
-        )
+        return None, url, "Karnataka row was not found in government tables."
 
     except Exception as error:
         return None, url, f"{type(error).__name__}: {error}"
+
+
+# ---------------- DISTANCE CALCULATION ----------------
+
+def calculate_distance(lat1, lon1, lat2, lon2):
+
+    earth_radius = 6371
+
+    dlat = radians(lat2 - lat1)
+    dlon = radians(lon2 - lon1)
+
+    a = (
+        sin(dlat / 2) ** 2
+        + cos(radians(lat1))
+        * cos(radians(lat2))
+        * sin(dlon / 2) ** 2
+    )
+
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    return earth_radius * c
+
+
+# ---------------- LOCATION SEARCH ----------------
+
+@st.cache_data(ttl=3600)
+def get_location_coordinates(place):
+
+    url = "https://nominatim.openstreetmap.org/search"
+
+    params = {
+        "q": place,
+        "format": "json",
+        "limit": 1
+    }
+
+    headers = {
+        "User-Agent": "DengueAIGuardian/1.0 (hospital finder)"
+    }
+
+    response = requests.get(
+        url,
+        params=params,
+        headers=headers,
+        timeout=(10, 30)
+    )
+
+    response.raise_for_status()
+
+    data = response.json()
+
+    if not data:
+        return None
+
+    return float(data[0]["lat"]), float(data[0]["lon"])
+
+
+# ---------------- HOSPITAL DATA API ----------------
+
+@st.cache_data(ttl=1800)
+def get_nearby_hospitals(latitude, longitude, radius):
+
+    query = f"""
+    [out:json][timeout:60];
+    (
+      node["amenity"="hospital"](around:{radius},{latitude},{longitude});
+      way["amenity"="hospital"](around:{radius},{latitude},{longitude});
+      relation["amenity"="hospital"](around:{radius},{latitude},{longitude});
+    );
+    out center tags;
+    """
+
+    servers = [
+        "https://overpass-api.de/api/interpreter",
+        "https://overpass.kumi.systems/api/interpreter",
+        "https://overpass.private.coffee/api/interpreter"
+    ]
+
+    headers = {
+        "User-Agent": "DengueAIGuardian/1.0 (hospital finder)",
+        "Accept": "application/json"
+    }
+
+    errors = []
+
+    for server in servers:
+
+        for attempt in range(2):
+
+            try:
+                response = requests.post(
+                    server,
+                    data={"data": query},
+                    headers=headers,
+                    timeout=(15, 90)
+                )
+
+                response.raise_for_status()
+
+                data = response.json()
+
+                if "elements" not in data:
+                    raise ValueError("Hospital data missing in API response.")
+
+                return data.get("elements", [])
+
+            except (requests.Timeout, requests.ConnectionError) as error:
+
+                errors.append(
+                    f"{server}, attempt {attempt + 1}: {error}"
+                )
+
+            except requests.RequestException as error:
+
+                errors.append(f"{server}: {error}")
+                break
+
+            except ValueError as error:
+
+                errors.append(f"{server}: {error}")
+                break
+
+    raise RuntimeError(
+        "Hospital data servers are temporarily unavailable. "
+        + " | ".join(errors[-3:])
+    )
+
+
+# ---------------- NEARBY HOSPITAL FINDER ----------------
+
+def show_hospital_finder():
+
+    st.subheader("🏥 Nearby Hospital Finder")
+
+    st.write(
+        "Search hospitals near your selected area "
+        "and view their locations on an interactive map."
+    )
+
+    place = st.text_input(
+        "Enter your area or location",
+        value="Bengaluru, Karnataka, India",
+        key="hospital_location"
+    )
+
+    radius_km = st.selectbox(
+        "Search radius",
+        [2, 5, 10, 15, 20],
+        index=1,
+        key="hospital_radius"
+    )
+
+    if st.button("🔍 Find Nearby Hospitals", key="find_hospitals"):
+
+        if not place.strip():
+            st.warning("Please enter a location.")
+            return
+
+        try:
+
+            with st.spinner("Finding location..."):
+
+                coordinates = get_location_coordinates(place)
+
+            if coordinates is None:
+                st.error(
+                    "Location not found. "
+                    "Try entering a nearby landmark or area name."
+                )
+                return
+
+            user_lat, user_lon = coordinates
+
+            st.success(
+                f"Search location coordinates: "
+                f"{user_lat:.5f}, {user_lon:.5f}"
+            )
+
+            with st.spinner(
+                "Searching nearby hospitals. This may take a little time..."
+            ):
+
+                hospitals = get_nearby_hospitals(
+                    user_lat,
+                    user_lon,
+                    radius_km * 1000
+                )
+
+            results = []
+
+            for hospital in hospitals:
+
+                tags = hospital.get("tags", {})
+
+                hospital_lat = hospital.get(
+                    "lat",
+                    hospital.get("center", {}).get("lat")
+                )
+
+                hospital_lon = hospital.get(
+                    "lon",
+                    hospital.get("center", {}).get("lon")
+                )
+
+                if hospital_lat is None or hospital_lon is None:
+                    continue
+
+                hospital_lat = float(hospital_lat)
+                hospital_lon = float(hospital_lon)
+
+                distance = calculate_distance(
+                    user_lat,
+                    user_lon,
+                    hospital_lat,
+                    hospital_lon
+                )
+
+                name = tags.get("name", "Unnamed Hospital")
+
+                address_parts = [
+                    tags.get("addr:street"),
+                    tags.get("addr:suburb"),
+                    tags.get("addr:city")
+                ]
+
+                address = ", ".join(
+                    part for part in address_parts if part
+                )
+
+                results.append({
+                    "name": name,
+                    "latitude": hospital_lat,
+                    "longitude": hospital_lon,
+                    "distance": distance,
+                    "address": address,
+                    "phone": tags.get(
+                        "phone",
+                        tags.get("contact:phone", "Not available")
+                    )
+                })
+
+            results.sort(key=lambda item: item["distance"])
+
+            if not results:
+                st.warning(
+                    "No hospitals were found in this radius. "
+                    "Try increasing the search radius or another nearby area."
+                )
+                return
+
+            st.success(f"Found {len(results)} hospital locations.")
+
+            # Create interactive map
+
+            hospital_map = folium.Map(
+                location=[user_lat, user_lon],
+                zoom_start=13
+            )
+
+            folium.Marker(
+                [user_lat, user_lon],
+                popup="Selected Search Location",
+                tooltip="Search Location",
+                icon=folium.Icon(
+                    color="blue",
+                    icon="home"
+                )
+            ).add_to(hospital_map)
+
+            for hospital in results:
+
+                folium.Marker(
+                    [
+                        hospital["latitude"],
+                        hospital["longitude"]
+                    ],
+                    popup=(
+                        f"{hospital['name']}<br>"
+                        f"Distance: {hospital['distance']:.2f} km"
+                    ),
+                    tooltip=hospital["name"],
+                    icon=folium.Icon(
+                        color="red",
+                        icon="plus-sign"
+                    )
+                ).add_to(hospital_map)
+
+            st.subheader("🗺️ Hospital Location Map")
+
+            st_folium(
+                hospital_map,
+                width=None,
+                height=500,
+                key="hospital_map"
+            )
+
+            # Hospital list
+
+            st.subheader("📍 Hospital Suggestions")
+
+            for index, hospital in enumerate(results, start=1):
+
+                with st.container(border=True):
+
+                    st.markdown(
+                        f"**{index}. {hospital['name']}**"
+                    )
+
+                    st.write(
+                        f"📏 Distance: {hospital['distance']:.2f} km"
+                    )
+
+                    if hospital["address"]:
+                        st.write(f"📍 Address: {hospital['address']}")
+
+                    st.write(f"☎️ Phone: {hospital['phone']}")
+
+                    directions_url = (
+                        "https://www.google.com/maps/dir/?api=1"
+                        f"&destination={hospital['latitude']},"
+                        f"{hospital['longitude']}"
+                    )
+
+                    st.link_button(
+                        "Get Directions",
+                        directions_url
+                    )
+
+            st.caption(
+                "Source: OpenStreetMap contributors. "
+                "Hospital listings and contact details may be incomplete. "
+                "Verify information before visiting."
+            )
+
+        except requests.Timeout:
+
+            st.error(
+                "The location or hospital service took too long to respond. "
+                "Please try again later or use a smaller search radius."
+            )
+
+        except requests.RequestException as error:
+
+            st.error(
+                "Unable to connect to the location or hospital service."
+            )
+            st.caption(str(error))
+
+        except RuntimeError as error:
+
+            st.error(
+                "Hospital data is temporarily unavailable from OpenStreetMap."
+            )
+            st.info(
+                "Please try again after some time. "
+                "The rest of the Dengue AI Guardian application is available."
+            )
+            st.caption(str(error))
+
+        except Exception as error:
+
+            st.error("Hospital Finder encountered an error.")
+            st.exception(error)
 
 
 # ---------------- WEATHER DASHBOARD ----------------
@@ -188,6 +551,7 @@ if weather:
     )
 
 else:
+
     st.warning("Weather service is temporarily unavailable.")
     st.caption(f"Details: {weather_error}")
 
@@ -228,6 +592,7 @@ if submitted:
     rash_value = 1 if rash == "Yes" else 0
 
     try:
+
         record_id = save_symptoms(
             fever_value,
             pain_value,
@@ -237,25 +602,34 @@ if submitted:
         score = fever_value + pain_value + rash_value
 
         st.subheader("Assessment Result")
-        st.metric("Symptoms reported", f"{score} / 3")
+
+        st.metric(
+            "Symptoms reported",
+            f"{score} / 3"
+        )
 
         st.success(
             f"Your responses were saved. Record ID: {record_id}"
         )
 
         if fever_value:
+
             st.warning(
                 "Fever can have many causes, including dengue. "
                 "Please contact a healthcare professional for assessment."
             )
+
         else:
+
             st.info(
                 "These answers cannot rule out dengue. "
                 "Consult a healthcare professional if concerned."
             )
 
     except Exception as error:
+
         st.error(f"Could not save patient record: {error}")
+
 
 st.divider()
 
@@ -345,10 +719,21 @@ try:
         st.metric("Total Patient Records", len(records))
 
     else:
+
         st.info("No patient records available yet.")
 
 except Exception as error:
+
     st.error(f"Could not load patient records: {error}")
+
+
+# ---------------- NEARBY HOSPITAL FINDER ----------------
+
+st.divider()
+
+show_hospital_finder()
+
+st.divider()
 
 
 # ---------------- FOOTER ----------------
@@ -356,6 +741,6 @@ except Exception as error:
 st.caption(
     "This application currently counts reported symptoms. "
     "It does not use a trained machine-learning model and "
-    "cannot diagnose dengue. Government data availability "
-    "depends on the external source."
+    "cannot diagnose dengue. Government and hospital data "
+    "availability depends on external sources."
 )
