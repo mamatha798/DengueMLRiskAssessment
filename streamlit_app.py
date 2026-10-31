@@ -1,10 +1,10 @@
 
 import json
 import sqlite3
-import urllib.request
+import urllib.request            
 from io import StringIO
 
-import pandas as pd
+from bs4 import BeautifulSoup
 import streamlit as st
 
 from database import create_tables, save_symptoms
@@ -55,6 +55,7 @@ def get_bengaluru_weather():
 
 # ---------------- OFFICIAL GOVERNMENT DATA ----------------
 
+
 def get_official_dengue_data():
 
     url = (
@@ -75,32 +76,49 @@ def get_official_dengue_data():
         with urllib.request.urlopen(request, timeout=25) as response:
             html = response.read().decode("utf-8", errors="replace")
 
-        # Use BeautifulSoup parser instead of lxml
-        tables = pd.read_html(
-            StringIO(html),
-            flavor="bs4"
-        )
+        # Use Python's built-in HTML parser
+        soup = BeautifulSoup(html, "html.parser")
 
-        if not tables:
-            return None, url, "No HTML tables found on the government page."
+        for table in soup.find_all("table"):
+            rows = []
 
-        for df in tables:
-            for _, row in df.iterrows():
+            for tr in table.find_all("tr"):
+                cells = tr.find_all(["th", "td"])
+                row = [
+                    cell.get_text(" ", strip=True)
+                    for cell in cells
+                ]
 
-                row_values = row.astype(str).str.strip()
+                if row:
+                    rows.append(row)
 
-                if row_values.str.fullmatch(
+            if not rows:
+                continue
+
+            # Make rows the same length
+            max_columns = max(len(row) for row in rows)
+            rows = [
+                row + [""] * (max_columns - len(row))
+                for row in rows
+            ]
+
+            df = pd.DataFrame(rows)
+
+            has_karnataka = df.apply(
+                lambda column: column.astype(str).str.fullmatch(
                     r"Karnataka",
                     case=False,
                     na=False
-                ).any():
+                ).any()
+            ).any()
 
-                    return df, url, None
+            if has_karnataka:
+                return df, url, None
 
         return (
             None,
             url,
-            "Karnataka row was not found in the retrieved government tables."
+            "Karnataka row was not found in the government HTML tables."
         )
 
     except Exception as error:
