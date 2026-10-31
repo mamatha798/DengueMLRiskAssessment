@@ -1,10 +1,10 @@
 
 import json
 import sqlite3
-import urllib.request            
-from io import StringIO
+import urllib.request
+from html.parser import HTMLParser
 
-from bs4 import BeautifulSoup
+import pandas as pd
 import streamlit as st
 
 from database import create_tables, save_symptoms
@@ -29,9 +29,54 @@ st.warning(
 )
 
 
+# ---------------- BUILT-IN HTML TABLE PARSER ----------------
+
+class TableParser(HTMLParser):
+
+    def __init__(self):
+        super().__init__()
+        self.tables = []
+        self.current_table = None
+        self.current_row = None
+        self.current_cell = None
+
+    def handle_starttag(self, tag, attrs):
+
+        if tag == "table":
+            self.current_table = []
+
+        elif tag == "tr" and self.current_table is not None:
+            self.current_row = []
+
+        elif tag in ("td", "th") and self.current_row is not None:
+            self.current_cell = ""
+
+    def handle_data(self, data):
+
+        if self.current_cell is not None:
+            self.current_cell += data
+
+    def handle_endtag(self, tag):
+
+        if tag in ("td", "th") and self.current_cell is not None:
+            self.current_row.append(self.current_cell.strip())
+            self.current_cell = None
+
+        elif tag == "tr" and self.current_row is not None:
+            if self.current_row:
+                self.current_table.append(self.current_row)
+            self.current_row = None
+
+        elif tag == "table" and self.current_table is not None:
+            if self.current_table:
+                self.tables.append(self.current_table)
+            self.current_table = None
+
+
 # ---------------- WEATHER API ----------------
 
 def get_bengaluru_weather():
+
     url = (
         "https://api.open-meteo.com/v1/forecast"
         "?latitude=12.9716&longitude=77.5946"
@@ -55,7 +100,6 @@ def get_bengaluru_weather():
 
 # ---------------- OFFICIAL GOVERNMENT DATA ----------------
 
-
 def get_official_dengue_data():
 
     url = (
@@ -76,30 +120,19 @@ def get_official_dengue_data():
         with urllib.request.urlopen(request, timeout=25) as response:
             html = response.read().decode("utf-8", errors="replace")
 
-        # Use Python's built-in HTML parser
-        soup = BeautifulSoup(html, "html.parser")
+        parser = TableParser()
+        parser.feed(html)
 
-        for table in soup.find_all("table"):
-            rows = []
+        if not parser.tables:
+            return None, url, "No HTML tables found on the government page."
 
-            for tr in table.find_all("tr"):
-                cells = tr.find_all(["th", "td"])
-                row = [
-                    cell.get_text(" ", strip=True)
-                    for cell in cells
-                ]
+        for table in parser.tables:
 
-                if row:
-                    rows.append(row)
+            max_columns = max(len(row) for row in table)
 
-            if not rows:
-                continue
-
-            # Make rows the same length
-            max_columns = max(len(row) for row in rows)
             rows = [
                 row + [""] * (max_columns - len(row))
-                for row in rows
+                for row in table
             ]
 
             df = pd.DataFrame(rows)
@@ -204,7 +237,6 @@ if submitted:
         score = fever_value + pain_value + rash_value
 
         st.subheader("Assessment Result")
-
         st.metric("Symptoms reported", f"{score} / 3")
 
         st.success(
@@ -310,10 +342,7 @@ try:
             use_container_width=True
         )
 
-        st.metric(
-            "Total Patient Records",
-            len(records)
-        )
+        st.metric("Total Patient Records", len(records))
 
     else:
         st.info("No patient records available yet.")
