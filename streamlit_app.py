@@ -9,6 +9,7 @@ import streamlit as st
 
 from database import create_tables, save_symptoms
 
+
 # ---------------- PAGE SETUP ----------------
 
 st.set_page_config(
@@ -26,6 +27,7 @@ st.warning(
     "This application is not a medical diagnosis tool. "
     "Please consult a qualified healthcare professional."
 )
+
 
 # ---------------- WEATHER API ----------------
 
@@ -54,6 +56,7 @@ def get_bengaluru_weather():
 # ---------------- OFFICIAL GOVERNMENT DATA ----------------
 
 def get_official_dengue_data():
+
     url = (
         "https://ncvbdc.mohfw.gov.in/index4.php"
         "?Background=Light&lang=1&level=0"
@@ -64,7 +67,7 @@ def get_official_dengue_data():
         request = urllib.request.Request(
             url,
             headers={
-                "User-Agent": "Mozilla/5.0",
+                "User-Agent": "Mozilla/5.0 DengueAIGuardian/1.0",
                 "Accept": "text/html,application/xhtml+xml"
             }
         )
@@ -72,13 +75,18 @@ def get_official_dengue_data():
         with urllib.request.urlopen(request, timeout=25) as response:
             html = response.read().decode("utf-8", errors="replace")
 
-        tables = pd.read_html(StringIO(html))
+        # Use BeautifulSoup parser instead of lxml
+        tables = pd.read_html(
+            StringIO(html),
+            flavor="bs4"
+        )
 
         if not tables:
             return None, url, "No HTML tables found on the government page."
 
         for df in tables:
             for _, row in df.iterrows():
+
                 row_values = row.astype(str).str.strip()
 
                 if row_values.str.fullmatch(
@@ -106,6 +114,7 @@ st.subheader("🌐 Live Bengaluru Weather")
 weather, weather_error = get_bengaluru_weather()
 
 if weather:
+
     col1, col2, col3 = st.columns(3)
 
     col1.metric(
@@ -133,6 +142,7 @@ else:
 
 st.divider()
 
+
 # ---------------- SYMPTOM ASSESSMENT ----------------
 
 st.subheader("🩺 Symptom Assessment")
@@ -158,6 +168,7 @@ with st.form("symptom_form"):
     )
 
     submitted = st.form_submit_button("Submit Assessment")
+
 
 if submitted:
 
@@ -198,6 +209,7 @@ if submitted:
 
 st.divider()
 
+
 # ---------------- MEDICAL SAFETY ----------------
 
 st.subheader("⚠️ Medical Safety Alert")
@@ -209,6 +221,7 @@ st.error(
 )
 
 st.divider()
+
 
 # ---------------- OFFICIAL DENGUE DATA ----------------
 
@@ -246,6 +259,7 @@ else:
 st.markdown(f"[NCVBDC Government Source]({source_url})")
 
 st.divider()
+
 
 # ---------------- PATIENT RECORD HISTORY ----------------
 
@@ -288,6 +302,7 @@ try:
 
 except Exception as error:
     st.error(f"Could not load patient records: {error}")
+
 
 # ---------------- FOOTER ----------------
 
