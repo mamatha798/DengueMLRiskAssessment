@@ -1,166 +1,236 @@
-import json
-import urllib.request
+
+import streamlit as st
 import pandas as pd
+import requests
+from database import create_tables, save_symptoms, get_connection
 
-from database import create_tables, save_symptoms
+# ---------------- PAGE CONFIGURATION ----------------
+st.set_page_config(
+    page_title="Dengue AI Guardian",
+    page_icon="🦟",
+    layout="wide"
+)
 
-# Initialize the database
 create_tables()
 
+# ---------------- SIDEBAR ----------------
+st.sidebar.title("🦟 Dengue AI Guardian")
 
-def get_yes_no(question):
-    while True:
-        answer = input(question + " (yes/no): ").strip().lower()
+page = st.sidebar.radio(
+    "Select a Page",
+    [
+        "Dashboard",
+        "Symptom Assessment",
+        "Patient Records",
+        "Live Weather",
+        "Dengue Prevention",
+        "Government Information",
+        "About & Safety"
+    ]
+)
 
-        if answer in ("yes", "no"):
-            return answer
+# ---------------- DASHBOARD ----------------
+if page == "Dashboard":
+    st.title("🦟 Dengue AI Guardian")
+    st.subheader("Dengue Awareness and Monitoring Dashboard")
 
-        print("Please enter yes or no.")
+    with get_connection() as conn:
+        total_records = conn.execute(
+            "SELECT COUNT(*) FROM patient_records"
+        ).fetchone()[0]
 
+    col1, col2 = st.columns(2)
+    col1.metric("Total Patient Records", total_records)
+    col2.metric("Monitoring Location", "Bengaluru")
 
-def get_bengaluru_weather():
-    url = (
-        "https://api.open-meteo.com/v1/forecast"
-        "?latitude=12.9716&longitude=77.5946"
-        "&current=temperature_2m,relative_humidity_2m,precipitation"
+    st.divider()
+    st.subheader("Welcome!")
+    st.write(
+        "This application demonstrates symptom recording, "
+        "patient history, live weather monitoring and dengue prevention."
     )
 
-    try:
-        request = urllib.request.Request(
-            url,
-            headers={"User-Agent": "DengueAIGuardian/1.0"}
-        )
-
-        with urllib.request.urlopen(request, timeout=10) as response:
-            data = json.loads(response.read().decode("utf-8"))
-
-        current = data.get("current", {})
-
-        print("\n🌐 Live Bengaluru Weather")
-        print("----------------------------")
-        print("Temperature:", current.get("temperature_2m"), "°C")
-        print("Humidity:", current.get("relative_humidity_2m"), "%")
-        print("Precipitation:", current.get("precipitation"), "mm")
-        print("Weather time:", current.get("time", "Not available"))
-
-    except Exception as error:
-        print("\nWeather API unavailable:", error)
-
-
-def show_official_dengue_data():
-    url = (
-        "https://ncvbdc.mohfw.gov.in/index4.php"
-        "?Background=Light&lang=1&level=0"
-        "&lid=3715&linkid=431"
+    st.info(
+        "Use the sidebar to access the different features."
     )
 
-    print("\n🇮🇳 Official Karnataka Dengue Data")
-    print("----------------------------------")
+# ---------------- SYMPTOM ASSESSMENT ----------------
+elif page == "Symptom Assessment":
+    st.title("🩺 Dengue Symptom Assessment")
 
-    try:
-        request = urllib.request.Request(
-            url,
-            headers={"User-Agent": "Mozilla/5.0 DengueAIGuardian/1.0"}
-        )
-
-        with urllib.request.urlopen(request, timeout=20) as response:
-            html = response.read()
-
-        tables = pd.read_html(html, header=None)
-
-        if not tables:
-            print("No tables found on the government page.")
-            print("Source:", url)
-            return
-
-        df = tables[0]
-        found = False
-
-        for _, row in df.iterrows():
-            row_text = row.astype(str).str.strip()
-
-            if row_text.str.fullmatch(
-                "Karnataka", case=False, na=False
-            ).any():
-
-                found = True
-                years = [2021, 2022, 2023, 2024, 2025, 2026]
-
-                for i, year in enumerate(years):
-                    cases = row.iloc[2 + i * 2]
-                    deaths = row.iloc[3 + i * 2]
-
-                    print(
-                        f"{year}: Cases = {cases}, "
-                        f"Deaths = {deaths}"
-                    )
-
-                print("\nSource: NCVBDC, Government of India")
-                print("2026 figures may be provisional.")
-                break
-
-        if not found:
-            print("Karnataka row was not found in the table.")
-            print("Please check the official source:", url)
-
-    except Exception as error:
-        print("Could not fetch official dengue data:", error)
-        print("Please check the government source:", url)
-
-
-def main():
-    print("🦟 Dengue AI Guardian")
-    print("============================")
-    print("Symptom Assessment")
-    print("This is not an AI diagnosis.")
-
-    fever = get_yes_no("Do you have fever?")
-    pain = get_yes_no("Do you have body pain?")
-    rash = get_yes_no("Do you have a skin rash?")
-
-    # Save symptoms in the local SQLite database
-    record_id = save_symptoms(
-        1 if fever == "yes" else 0,
-        1 if pain == "yes" else 0,
-        1 if rash == "yes" else 0
+    st.warning(
+        "This is an educational symptom checklist. "
+        "It is not an AI diagnosis or a clinically validated prediction."
     )
 
-    score = sum([
-        fever == "yes",
-        pain == "yes",
-        rash == "yes"
-    ])
+    with st.form("symptom_form"):
+        fever = st.checkbox("Do you have fever?")
+        body_pain = st.checkbox("Do you have body pain?")
+        skin_rash = st.checkbox("Do you have skin rash?")
 
-    print("\n--- Assessment Result ---")
-    print("Symptoms reported:", score, "out of 3")
-    print("Record saved in local database. ID:", record_id)
+        submitted = st.form_submit_button("Submit Assessment")
 
-    if fever == "yes":
-        print(
-            "Fever can have many causes, including dengue. "
-            "Please contact a healthcare professional for assessment."
+    if submitted:
+        record_id = save_symptoms(
+            int(fever),
+            int(body_pain),
+            int(skin_rash)
         )
+
+        score = int(fever) + int(body_pain) + int(skin_rash)
+
+        st.success(f"Patient record saved. Record ID: {record_id}")
+        st.metric("Symptoms Reported", f"{score} / 3")
+
+        if fever:
+            st.warning(
+                "Fever can have many causes, including dengue. "
+                "Please contact a healthcare professional."
+            )
+        else:
+            st.info(
+                "These answers cannot rule out dengue. "
+                "Consult a healthcare professional if concerned."
+            )
+
+        st.error(
+            "URGENT: Severe abdominal pain, persistent vomiting, "
+            "bleeding, difficulty breathing, confusion, or cold/clammy "
+            "skin require urgent medical evaluation. Do not wait for this app."
+        )
+
+# ---------------- PATIENT RECORDS ----------------
+elif page == "Patient Records":
+    st.title("📋 Patient Records")
+
+    with get_connection() as conn:
+        records = pd.read_sql_query(
+            "SELECT * FROM patient_records ORDER BY id DESC",
+            conn
+        )
+
+    if records.empty:
+        st.info("No patient records available yet.")
     else:
-        print(
-            "These answers cannot rule out dengue. "
-            "Consult a healthcare professional if you are concerned."
+        st.dataframe(records, use_container_width=True)
+
+        csv = records.to_csv(index=False).encode("utf-8")
+
+        st.download_button(
+            label="Download Patient Records (CSV)",
+            data=csv,
+            file_name="dengue_patient_records.csv",
+            mime="text/csv"
         )
 
-    print("\n⚠️ Medical Safety")
-    print(
-        "Severe abdominal pain, persistent vomiting, bleeding, "
-        "difficulty breathing, confusion, or cold/clammy skin "
-        "need urgent medical evaluation. Do not wait for this app."
+# ---------------- LIVE WEATHER ----------------
+elif page == "Live Weather":
+    st.title("🌦️ Live Bengaluru Weather")
+
+    st.write("Weather data provided by Open-Meteo.")
+
+    if st.button("Fetch Latest Weather"):
+        url = (
+            "https://api.open-meteo.com/v1/forecast"
+            "?latitude=12.9716&longitude=77.5946"
+            "&current=temperature_2m,relative_humidity_2m,precipitation"
+        )
+
+        try:
+            response = requests.get(url, timeout=15)
+            response.raise_for_status()
+
+            current = response.json()["current"]
+
+            c1, c2, c3 = st.columns(3)
+
+            c1.metric(
+                "Temperature",
+                f'{current["temperature_2m"]} °C'
+            )
+            c2.metric(
+                "Humidity",
+                f'{current["relative_humidity_2m"]}%'
+            )
+            c3.metric(
+                "Precipitation",
+                f'{current["precipitation"]} mm'
+            )
+
+            st.caption(f'Weather time: {current["time"]}')
+
+        except Exception as error:
+            st.error(f"Weather API unavailable: {error}")
+
+# ---------------- PREVENTION ----------------
+elif page == "Dengue Prevention":
+    st.title("🛡️ Dengue Prevention and Food Guidance")
+
+    st.subheader("Prevent Mosquito Breeding")
+    st.markdown("""
+    - Remove stagnant water around your home.
+    - Keep water storage containers covered.
+    - Use mosquito nets and repellents.
+    - Wear clothing that covers your arms and legs.
+    """)
+
+    st.divider()
+
+    st.subheader("Food and Hydration")
+    st.markdown("""
+    - Drink adequate safe fluids.
+    - Eat balanced meals that you can tolerate.
+    - Include fruits and vegetables.
+    - Follow your doctor's dietary advice.
+    - Do not use food or home remedies as a substitute for medical care.
+    """)
+
+# ---------------- GOVERNMENT INFORMATION ----------------
+elif page == "Government Information":
+    st.title("🇮🇳 Official Dengue Information")
+
+    st.write(
+        "Refer to these official sources for verified health information."
     )
 
-    print(
-        "\nNote: This program counts reported symptoms only. "
-        "It is not a trained ML model and cannot diagnose dengue."
+    st.markdown(
+        "[NCVBDC – Government of India](https://ncvbdc.mohfw.gov.in/)"
+    )
+    st.markdown(
+        "[Ministry of Health and Family Welfare](https://mohfw.gov.in/)"
+    )
+    st.markdown(
+        "[WHO – Dengue Information](https://www.who.int/news-room/fact-sheets/detail/dengue-and-severe-dengue)"
     )
 
-    get_bengaluru_weather()
-    show_official_dengue_data()
+    st.info(
+        "These are official information links. "
+        "This application does not currently fetch live government case figures."
+    )
 
+# ---------------- ABOUT AND SAFETY ----------------
+elif page == "About & Safety":
+    st.title("ℹ️ About Dengue AI Guardian")
 
-if __name__ == "__main__":
-    main()
+    st.write("""
+    Dengue AI Guardian is an educational project for demonstrating:
+
+    - Symptom assessment and recording
+    - Patient record history
+    - Live Bengaluru weather
+    - Dengue prevention information
+    - Official health information links
+    """)
+
+    st.warning("""
+    MEDICAL SAFETY NOTICE
+
+    This application is not a medical device. It does not diagnose dengue
+    or provide a clinically validated risk prediction.
+
+    Always consult a qualified healthcare professional.
+    Do not delay emergency medical care based on this application.
+    """)
+
+st.sidebar.divider()
+st.sidebar.caption("Dengue AI Guardian | Educational Project")
